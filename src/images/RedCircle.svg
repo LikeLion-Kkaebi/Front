@@ -1,0 +1,18 @@
+<svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 43">
+<circle id="Ellipse 61" cx="23" cy="23" r="23" fill="#FC3B00"/>
+<g id="Group 27">
+<g id="Group 23">
+<path id="Ellipse 25" d="M15.6495 30.8252C19.7091 30.8252 23 27.0035 23 22.2891L8.29897 22.2891C8.29897 27.0035 11.5899 30.8252 15.6495 30.8252Z" fill="white"/>
+<path id="Ellipse 26" d="M15.6495 28.4541C18.3995 28.4541 20.6288 25.694 20.6288 22.2892L10.6701 22.2892C10.6701 25.694 12.8994 28.4541 15.6495 28.4541Z" fill="black"/>
+<rect id="Rectangle 5" width="10.1959" height="4.26804" rx="2.13402" transform="matrix(1 0 0 -1 10.433 19.2061)" fill="black"/>
+</g>
+<g id="Group 24">
+<path id="Ellipse 25_2" d="M29.8763 30.8252C25.8168 30.8252 22.5258 27.0035 22.5258 22.2891L37.2268 22.2891C37.2269 27.0035 33.9359 30.8252 29.8763 30.8252Z" fill="white"/>
+<path id="Ellipse 26_2" d="M29.8763 28.4541C27.1263 28.4541 24.8969 25.694 24.8969 22.2892L34.8557 22.2892C34.8557 25.694 32.6263 28.4541 29.8763 28.4541Z" fill="black"/>
+<rect id="Rectangle 5_2" x="35.0928" y="19.2061" width="10.1959" height="4.26804" rx="2.13402" transform="rotate(-180 35.0928 19.2061)" fill="black"/>
+</g>
+<circle id="Ellipse 22" cx="1.77835" cy="1.77835" r="1.77835" transform="matrix(-1 0 0 1 24.4227 26.5576)" fill="#FEC400"/>
+</g>
+</g>
+</svg>

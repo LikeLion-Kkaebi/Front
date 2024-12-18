@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" fill="none">
+  <circle cx="23" cy="23" r="23" fill="black"/>
+  <ellipse cx="7.37044" cy="8.02851" rx="7.37044" ry="8.02851" transform="matrix(-1 0 0 1 37.4288 15)" fill="white"/>
+  <ellipse cx="4.08006" cy="4.60652" rx="4.08006" ry="4.60652" transform="matrix(-1 0 0 1 32.1642 18.4224)" fill="black"/>
+  <ellipse cx="16.3704" cy="23.0285" rx="7.37044" ry="8.02851" fill="white"/>
+  <ellipse cx="18.3446" cy="23.0289" rx="4.08006" ry="4.60652" fill="black"/>
+  <circle cx="23.1929" cy="29.3458" r="1.97422" fill="#FC3B00"/>
+</svg>

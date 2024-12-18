@@ -1,0 +1,23 @@
+{
+  "house": "rara",
+  "total_house_tasks": 6,
+  "total_members": 3,
+  "house_completion_rate": "80%",
+  "distribution": [
+    {
+      "nickname": "1234",
+      "total_tasks": 3,
+      "distribution_percentage": "none"
+    },
+    {
+      "nickname": "콜라",
+      "total_tasks": 1,
+      "distribution_percentage": "none"
+    },
+    {
+      "nickname": "사이다",
+      "total_tasks": 2,
+      "distribution_percentage": "none"
+    }
+  ]
+}
