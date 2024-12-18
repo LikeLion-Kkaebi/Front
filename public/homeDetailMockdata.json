@@ -1,0 +1,45 @@
+{
+  "details": [
+    {
+      "houseworkId": 1,
+      "tag": "청소",
+      "houseworkDate": "2024-11-23",
+      "houseworkPlace": "거실",
+      "houseworkDetail": "청소하기",
+      "houseworkDone": false
+    },
+    {
+      "houseworkId": 2,
+      "tag": "쓰레기 버리기",
+      "houseworkDate": "2024-11-23",
+      "houseworkPlace": "화장실",
+      "houseworkDetail": "청소하기",
+      "houseworkDone": false
+    },
+    {
+      "houseworkId": 3,
+      "tag": "쓰레기 버리기",
+      "houseworkDate": "2024-11-23",
+      "houseworkPlace": "부엌",
+      "houseworkDetail": "청소하기",
+      "houseworkDone": true
+    },
+    {
+      "houseworkId": 4,
+      "tag": "쓰레기 버리기",
+      "houseworkDate": "2024-11-24",
+      "houseworkPlace": "부엌",
+      "houseworkDetail": "청소하기",
+      "houseworkDone": true
+    },
+    {
+      "houseworkId": 5,
+      "tag": "반려동물 관리",
+      "houseworkDate": "2024-11-25",
+      "houseworkPlace": "내 방",
+      "houseworkDetail": "책상 청소",
+      "houseworkDone": true
+    }
+  ],
+  "level": "Lv7. 빛"
+}

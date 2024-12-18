@@ -1,0 +1,8 @@
+{
+  "message": "house 생성",
+  "data": {
+    "houseid": 1,
+    "housename": "정은이네",
+    "housecode": "7766"
+  }
+}
