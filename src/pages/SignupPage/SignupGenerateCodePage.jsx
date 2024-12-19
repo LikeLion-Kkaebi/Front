@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
@@ -9,24 +9,19 @@ import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
 const SignupGenerateCodePage = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState(["", "", "", ""]);
-  const [houseName, setHouseName] = useState(""); // housename 상태 추가
-  const inputsRef = useRef([]);
+  const [houseName, setHouseName] = useState("");
 
   useEffect(() => {
-    // Mock 데이터 가져오기
-    const fetchMockData = async () => {
-      try {
-        const response = await fetch("/mockdata.json");
-        const data = await response.json();
-        const housecodeArray = data.data.housecode.split(""); // 한 글자씩 배열로 변환
-        setCode(housecodeArray); // 상태에 저장
-        setHouseName(data.data.housename); // housename 설정
-      } catch (error) {
-        console.error("Error fetching mock data:", error);
-      }
-    };
+    // 로컬 스토리지에서 저장된 housecode와 housename 가져오기
+    const housecode = localStorage.getItem("housecode");
+    const housename = localStorage.getItem("housename");
 
-    fetchMockData();
+    if (housecode) {
+      setCode(housecode.split(""));
+    }
+    if (housename) {
+      setHouseName(housename);
+    }
   }, []);
 
   return (
@@ -45,7 +40,7 @@ const SignupGenerateCodePage = () => {
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
             <Comment>
               <HouseName>
-                <Comment1>{houseName}</Comment1> {/* housename 동적 표시 */}
+                <Comment1>{houseName}</Comment1>
                 <Comment2>의</Comment2>
               </HouseName>
               <Comment3>우리집 코드를 생성했어요!</Comment3>
@@ -53,12 +48,7 @@ const SignupGenerateCodePage = () => {
           </Kkaebi>
           <CodeInput>
             {code.map((char, index) => (
-              <Input
-                key={index}
-                value={char}
-                readOnly // 읽기 전용으로 설정
-                ref={(el) => (inputsRef.current[index] = el)}
-              />
+              <Input key={index} value={char} readOnly />
             ))}
           </CodeInput>
         </Top>
@@ -158,7 +148,7 @@ const Comment3 = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const CodeInput = styled.div`

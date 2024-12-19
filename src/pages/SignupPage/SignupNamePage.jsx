@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import instance from "../../api/axios";
+import instance from "axios"; // Axios를 사용해 API 요청을 보냄
 
 import GlobalStyle from "../../style/GlobalStyle";
 import SignupBackBtn from "../../images/SignupBackBtn.svg";
@@ -12,6 +12,7 @@ const SignupNamePage = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [loading, setLoading] = useState(false); // 로딩 상태
 
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
@@ -34,36 +35,30 @@ const SignupNamePage = () => {
     }
   };
 
-  const handleNextClick = async () => {
-    if (!isButtonActive) return;
+  const handleSubmit = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!isButtonActive || !token) return;
 
+    setLoading(true);
     try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        setError("로그인이 필요합니다. 다시 로그인해주세요.");
-        return;
-      }
-
       const response = await instance.put(
         `${process.env.REACT_APP_SERVER_PORT}user/create/nickname/`,
-        { nickname: name }, // 요청 바디
+        { nickname: name },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // 토큰 추가
+            Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
-      if (response.status === 200) {
-        console.log("이름 업데이트 성공:", response.data);
-        navigate("/signupcodeinput");
-      }
-    } catch (err) {
-      console.error("이름 업데이트 실패:", err.response?.data || err.message);
-      setError(
-        err.response?.data?.detail ||
-          "서버 오류가 발생했습니다. 다시 시도해주세요."
-      );
+      console.log(response.data);
+      navigate("/signupcodeinput"); // 성공 시 다음 페이지로 이동
+    } catch (error) {
+      console.error("API 요청 에러:", error);
+      setError("서버 요청 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,10 +88,10 @@ const SignupNamePage = () => {
         </Top>
         <Bottom>
           <NextBtn
-            $isActive={isButtonActive}
-            onClick={handleNextClick} // 백엔드 연결
+            $isActive={isButtonActive && !loading}
+            onClick={handleSubmit}
           >
-            다음
+            {loading ? "이동 중..." : "다음"}
           </NextBtn>
         </Bottom>
       </Container>
@@ -105,8 +100,6 @@ const SignupNamePage = () => {
 };
 
 export default SignupNamePage;
-
-// 기존 스타일 코드 그대로 사용
 
 const Header = styled.div`
   display: flex;
@@ -150,7 +143,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
   margin-bottom: 20px;
 `;
 
@@ -166,7 +159,7 @@ const Comment = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const Input = styled.input`

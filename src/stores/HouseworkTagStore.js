@@ -19,9 +19,11 @@ const useHouseworkTagStore = create((set) => ({
   houseworkPlace: "",
   houseworkDetail: "",
   selectedTag: null,
+  signupSelectedTag: null, // SignupBestWorkPage에서 사용
   setHouseworkPlace: (place) => set({ houseworkPlace: place }),
   setHouseworkDetail: (detail) => set({ houseworkDetail: detail }),
   setSelectedTag: (tag) => set({ selectedTag: tag }),
+  setSignupSelectedTag: (tag) => set({ signupSelectedTag: tag }),
 }));
 
 export default useHouseworkTagStore;

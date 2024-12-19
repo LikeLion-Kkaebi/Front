@@ -10,10 +10,12 @@ const SignupCodeInputPage = () => {
   const navigate = useNavigate();
   const [code, setCode] = useState(["", "", "", ""]);
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [error, setError] = useState(""); // 에러 메시지 상태
+  const [loading, setLoading] = useState(false); // 로딩 상태
   const inputsRef = useRef([]);
 
   const handleInputChange = (index, value) => {
-    if (value.length > 1) return; // 한 글자만 입력 가능
+    if (value.length > 1) return; // 한 칸 당 한 글자만 입력 가능
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
@@ -25,11 +27,56 @@ const SignupCodeInputPage = () => {
 
     // 버튼 활성화 조건 확인
     setIsButtonActive(newCode.every((char) => char !== ""));
+    setError(""); // 에러 메시지 초기화
   };
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !code[index] && index > 0) {
       inputsRef.current[index - 1].focus();
+    }
+  };
+
+  const handleSubmit = async () => {
+    const fullCode = code.join(""); // 입력된 코드 합치기
+    if (!isButtonActive || loading) return;
+
+    setLoading(true);
+    setError(""); // 에러 초기화
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_PORT}user/house/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+          },
+          body: JSON.stringify({ housecode: fullCode }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("API 성공:", data);
+        localStorage.setItem("housecode", data.house.housecode);
+        localStorage.setItem("housename", data.house.housename);
+        navigate("/signupcharacter");
+      } else {
+        const errorData = await response.json();
+        console.error("API 실패:", errorData);
+        setError("코드를 찾을 수 없어요."); // 에러 메시지 설정
+        setIsButtonActive(false); // 버튼 비활성화
+        setCode(["", "", "", ""]); // 입력값 초기화
+        inputsRef.current[0]?.focus(); // 첫 번째 입력창으로 포커스 이동
+      }
+    } catch (error) {
+      console.error("API 요청 중 오류 발생:", error);
+      setError("코드를 찾을 수 없어요."); // 에러 메시지 설정
+      setIsButtonActive(false); // 버튼 비활성화
+      setCode(["", "", "", ""]); // 입력값 초기화
+      inputsRef.current[0]?.focus(); // 첫 번째 입력창으로 포커스 이동
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,16 +107,17 @@ const SignupCodeInputPage = () => {
               />
             ))}
           </CodeInput>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
         </Top>
         <Bottom>
           <Question onClick={() => navigate("/signupsethome")}>
             우리집 코드가 없나요?
           </Question>
           <NextBtn
-            $isActive={isButtonActive}
-            onClick={() => isButtonActive && navigate("/signupcharacter")}
+            $isActive={isButtonActive && !loading}
+            onClick={handleSubmit}
           >
-            다음
+            {loading ? "처리 중..." : "다음"}
           </NextBtn>
         </Bottom>
       </Container>
@@ -121,7 +169,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
   margin-bottom: 20px;
 `;
 
@@ -137,11 +185,12 @@ const Comment = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const CodeInput = styled.div`
   display: flex;
+  position: relative;
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -164,12 +213,27 @@ const Input = styled.input`
   font-style: normal;
   font-weight: 400;
   line-height: 1; /* 수직 중앙 정렬 */
-  text-align: center; /* 수평 중앙 정렬 */
+  text-align: center;
 
   &:focus {
     border: 0.5px solid #000; /* 포커스 시 검정색 테두리 */
     outline: none; /* 기본 포커스 효과 제거 */
   }
+`;
+const ErrorMessage = styled.div`
+  position: absolute;
+  color: #f00;
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+
+  margin-top: 162px;
+  width: 100%;
+  left: 0;
+  text-align: center;
+  margin-left: -110px;
 `;
 
 const Bottom = styled.div`
@@ -187,7 +251,7 @@ const Question = styled.button`
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 24px */
+  line-height: 150%;
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-skip-ink: none;
