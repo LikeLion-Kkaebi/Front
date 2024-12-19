@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import instance from "axios";
 
 import GlobalStyle from "../../style/GlobalStyle";
 import SignupBackBtn from "../../images/SignupBackBtn.svg";
@@ -9,9 +10,60 @@ import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
 const SignupSetHomePage = () => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
+  const [error, setError] = useState(""); // 오류 메시지
+  const [isButtonActive, setIsButtonActive] = useState(false); // 버튼 활성화 상태
+  const [loading, setLoading] = useState(false); // 로딩 상태
 
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+    const value = e.target.value;
+    if (value.length > 8) {
+      setError("이름은 최대 8글자로 작성해주세요."); // 오류 메시지 설정
+      setIsButtonActive(false); // 버튼 비활성화
+    } else {
+      setError(""); // 오류 메시지 초기화
+      setIsButtonActive(value.trim() !== ""); // 입력값이 유효할 때만 버튼 활성화
+    }
+    setInputValue(value);
+  };
+
+  const handleInputBlur = () => {
+    if (inputValue.length > 8 || inputValue.trim() === "") {
+      setIsButtonActive(false);
+    }
+  };
+
+  const handleNextClick = async () => {
+    if (!isButtonActive || loading) return;
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_PORT}user/create/house/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+          },
+          body: JSON.stringify({ housename: inputValue.trim() }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        localStorage.setItem("housecode", data.data.housecode);
+        localStorage.setItem("housename", data.data.housename);
+        navigate("/signupgeneratecode");
+      } else {
+        console.error("Failed to create house");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false); // 로딩 종료
+    }
   };
 
   return (
@@ -35,20 +87,18 @@ const SignupSetHomePage = () => {
               placeholder="ex) 깨비"
               value={inputValue}
               onChange={handleInputChange}
+              onBlur={handleInputBlur}
             />
             <House>하우스</House>
           </InputBox>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
         </Top>
         <Bottom>
           <NextBtn
-            $isActive={inputValue.trim() !== ""}
-            onClick={() => {
-              if (inputValue.trim() !== "") {
-                navigate("/signupgeneratecode");
-              }
-            }}
+            $isActive={isButtonActive && !loading}
+            onClick={handleNextClick}
           >
-            다음
+            {loading ? "이동 중..." : "다음"}
           </NextBtn>
         </Bottom>
       </Container>
@@ -100,7 +150,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
   margin-bottom: 20px;
 `;
 
@@ -116,7 +166,7 @@ const Comment = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const InputBox = styled.div`
@@ -176,6 +226,17 @@ const House = styled.div`
   font-weight: 400;
   line-height: normal;
   white-space: nowrap;
+`;
+
+const ErrorMessage = styled.div`
+  color: #f00;
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 12px;
+  margin-left: 20px;
 `;
 
 const Bottom = styled.div`

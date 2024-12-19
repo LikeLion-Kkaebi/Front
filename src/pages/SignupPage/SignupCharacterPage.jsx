@@ -26,7 +26,7 @@ const SignupNamePage = () => {
   const startXRef = useRef(0);
   const translateXRef = useRef(0);
 
-  // Mouse Events
+  // 마우스를 사용해서 드래그 하는 경우
   const handleMouseDown = (e) => {
     setIsDragging(true);
     startXRef.current = e.clientX;
@@ -42,7 +42,7 @@ const SignupNamePage = () => {
     handleDragEnd();
   };
 
-  // Touch Events
+  // 터치스크린을 이용해서 드래그하는 경우
   const handleTouchStart = (e) => {
     setIsDragging(true);
     startXRef.current = e.touches[0].clientX;
@@ -117,14 +117,41 @@ const SignupNamePage = () => {
         </Top>
         <Bottom>
           <NextBtn
-            onClick={() => {
+            onClick={async () => {
               const payload = {
                 character: characters[selectedCharacter].id.toString(),
               };
               console.log("백엔드로 전달되는 데이터:", payload);
-              navigate("/signupbestwork", {
-                state: payload,
-              });
+
+              try {
+                const response = await fetch(
+                  `${process.env.REACT_APP_SERVER_PORT}user/create/character/`,
+                  {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+                    },
+                    body: JSON.stringify(payload),
+                  }
+                );
+
+                if (response.ok) {
+                  const data = await response.json();
+                  console.log("API 성공:", data);
+
+                  // 성공 시 다음 페이지로 이동
+                  navigate("/signupbestwork", {
+                    state: payload,
+                  });
+                } else {
+                  console.error("API 실패:", response.status);
+                  alert("캐릭터 변경에 실패했습니다. 다시 시도해주세요.");
+                }
+              } catch (error) {
+                console.error("API 요청 중 오류 발생:", error);
+                alert("서버 오류가 발생했습니다. 다시 시도해주세요.");
+              }
             }}
           >
             다음

@@ -5,29 +5,37 @@ import { useNavigate } from "react-router-dom";
 import GlobalStyle from "../../style/GlobalStyle";
 import SignupBackBtn from "../../images/SignupBackBtn.svg";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
-import CategorySelector from "../../components/CategorySelector"; // 새 컴포넌트 경로
-
-const categories = [
-  "빨래",
-  "설거지",
-  "청소",
-  "생필품 구매",
-  "쓰레기 버리기",
-  "분리수거",
-  "요리",
-  "식물 관리",
-  "반려동물 관리",
-];
+import CategorySelector from "../../components/CategorySelector";
+import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 
 const SignupBestWorkPage = () => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const houseworkTag = useHouseworkTagStore((state) => state.houseworkTag); // Store에서 카테고리 가져오기
+  const setSignupSelectedTag = useHouseworkTagStore(
+    (state) => state.setSignupSelectedTag
+  );
+  const categories = Object.values(houseworkTag);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
 
   const toggleCategory = (category) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories((prev) => prev.filter((item) => item !== category));
+    const tag = Object.keys(houseworkTag).find(
+      (key) => houseworkTag[key] === category
+    );
+
+    if (selectedCategory === category) {
+      setSelectedCategory(null);
+      setSignupSelectedTag(null); // 선택 해제 시 Store의 값도 초기화
+      console.log("선택취소");
     } else {
-      setSelectedCategories((prev) => [...prev, category]);
+      setSelectedCategory(category);
+      setSignupSelectedTag(Number(tag));
+      console.log("선택된 tag:", tag);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (selectedCategory) {
+      navigate("/signupkkaebicomment");
     }
   };
 
@@ -53,26 +61,12 @@ const SignupBestWorkPage = () => {
           </Kkaebi>
           <CategorySelector
             categories={categories}
-            selectedCategories={selectedCategories}
+            selectedCategories={selectedCategory ? [selectedCategory] : []}
             onToggle={toggleCategory}
           />
         </Top>
         <Bottom>
-          <NextBtn
-            $isActive={selectedCategories.length > 0}
-            onClick={() => {
-              if (selectedCategories.length > 0) {
-                const houseworkTag = selectedCategories
-                  .map((category) => categories.indexOf(category) + 1)
-                  .join(", ");
-
-                const payload = { houseworkTag };
-
-                console.log("백엔드로 전달되는 데이터:", payload);
-                navigate("/signupkkaebicomment");
-              }
-            }}
-          >
+          <NextBtn $isActive={!!selectedCategory} onClick={handleNextClick}>
             시작하기
           </NextBtn>
         </Bottom>

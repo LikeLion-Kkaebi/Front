@@ -5,6 +5,9 @@ import GlobalStyle from "./style/GlobalStyle";
 import "./style/normalize.css";
 
 import LoginPage from "./pages/LoginPage/LoginPage.jsx";
+import KakaoLoginPage from "./pages/UserInfo/KakaoLoginPage";
+
+//회원가입 페이지
 import SignupIntroPage from "./pages/SignupPage/SignupIntroPage.jsx";
 import CalendarPage from "./pages/CalendarPage.jsx";
 import SignupNamePage from "./pages/SignupPage/SignupNamePage.jsx";
@@ -15,9 +18,11 @@ import SignupCharacterPage from "./pages/SignupPage/SignupCharacterPage.jsx";
 import SignupBestWorkPage from "./pages/SignupPage/SignupBestWorkPage.jsx";
 import SignupKkaebiCommentPage from "./pages/SignupPage/SignupKkaebiCommentPage.jsx";
 
+//메인페이지
 import HomeMainPage from "./pages/HomePage/HomeMainPage.jsx";
 import HomeStatisticsPage from "./pages/HomePage/HomeStatisticsPage.jsx";
 import NotificationPage from "./pages/NotificationPage.jsx";
+
 import MyPage from "./pages/MyPage.jsx";
 
 import DayPage from "./pages/DayPage.jsx";
@@ -58,6 +63,12 @@ function App() {
             path="/signupkkaebicomment"
             element={<SignupKkaebiCommentPage />}
           />
+
+          {/*소셜 로그인*/}
+          <Route
+            path={"/accounts/kakao/callback"}
+            element={<KakaoLoginPage />}
+          ></Route>
 
           {/* 홈페이지 */}
           <Route path="/homemain" element={<HomeMainPage />} />
