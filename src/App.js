@@ -66,7 +66,7 @@ function App() {
 
           {/*소셜 로그인*/}
           <Route
-            path={"/accounts/kakao/callback"}
+            path={"/user/login/kakao/callback"}
             element={<KakaoLoginPage />}
           ></Route>
 

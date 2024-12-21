@@ -12,7 +12,6 @@ const SignupGenerateCodePage = () => {
   const [houseName, setHouseName] = useState("");
 
   useEffect(() => {
-    // 로컬 스토리지에서 저장된 housecode와 housename 가져오기
     const housecode = localStorage.getItem("housecode");
     const housename = localStorage.getItem("housename");
 
@@ -86,7 +85,7 @@ const Container = styled.div`
   padding: 0 20px;
   background-color: #fafafa;
   height: calc(100vh - 132px); /* Header 패딩과 NextBtn 마진 포함 */
-  overflow: hidden; /* 스크롤 숨기기 */
+  overflow: hidden;
   padding-bottom: 74px;
 `;
 
@@ -104,7 +103,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
   margin-bottom: 20px;
 `;
 
@@ -130,7 +129,7 @@ const Comment1 = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const Comment2 = styled.div`
@@ -174,12 +173,12 @@ const Input = styled.input`
   font-size: 24px;
   font-style: normal;
   font-weight: 400;
-  line-height: 1; /* 수직 중앙 정렬 */
-  text-align: center; /* 수평 중앙 정렬 */
+  line-height: 1;
+  text-align: center;
 
   &:focus {
-    border: 0.5px solid #000; /* 포커스 시 검정색 테두리 */
-    outline: none; /* 기본 포커스 효과 제거 */
+    border: 0.5px solid #000;
+    outline: none;
   }
 `;
 

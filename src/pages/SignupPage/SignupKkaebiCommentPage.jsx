@@ -37,7 +37,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100vh; /* 화면 전체 높이로 설정 */
+  height: 100vh;
   background: #fafafa;
   position: relative;
   overflow: hidden;

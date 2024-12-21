@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import instance from "axios"; // Axios를 사용해 API 요청을 보냄
+import instance from "axios";
 
 import GlobalStyle from "../../style/GlobalStyle";
 import SignupBackBtn from "../../images/SignupBackBtn.svg";
@@ -12,7 +12,7 @@ const SignupNamePage = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [isButtonActive, setIsButtonActive] = useState(false);
-  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
@@ -36,7 +36,7 @@ const SignupNamePage = () => {
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("token");
     if (!isButtonActive || !token) return;
 
     setLoading(true);
@@ -46,7 +46,7 @@ const SignupNamePage = () => {
         { nickname: name },
         {
           headers: {
-            Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -177,7 +177,7 @@ const Input = styled.input`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  box-sizing: border-box; /* 패딩 포함 너비 계산 */
+  box-sizing: border-box;
 
   &::placeholder {
     color: #787878;
@@ -189,7 +189,7 @@ const Input = styled.input`
   }
 
   &:focus {
-    border: 0.5px solid #000; /* 포커스 시 검정색 테두리 */
+    border: 0.5px solid #000;
     outline: none; /* 기본 포커스 효과 제거 */
   }
 `;
