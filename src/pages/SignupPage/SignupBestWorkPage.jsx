@@ -14,7 +14,7 @@ const SignupBestWorkPage = () => {
     (state) => state.setSignupSelectedTag
   );
   const categories = Object.values(houseworkTag);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const navigate = useNavigate();
 
   const toggleCategory = (category) => {
@@ -22,20 +22,70 @@ const SignupBestWorkPage = () => {
       (key) => houseworkTag[key] === category
     );
 
-    if (selectedCategory === category) {
-      setSelectedCategory(null);
-      setSignupSelectedTag(null); // 선택 해제 시 Store의 값도 초기화
+    if (selectedCategories.includes(category)) {
+      // 이미 선택된 경우 -> 선택 해제
+      const updatedCategories = selectedCategories.filter(
+        (item) => item !== category
+      );
+      setSelectedCategories(updatedCategories);
       console.log("선택취소");
     } else {
-      setSelectedCategory(category);
-      setSignupSelectedTag(Number(tag));
+      // 새로운 선택 추가
+      const updatedCategories = [...selectedCategories, category];
+      setSelectedCategories(updatedCategories);
       console.log("선택된 tag:", tag);
     }
+
+    // Store 업데이트 (선택된 모든 태그의 ID를 배열로 설정)
+    const updatedTags = [...selectedCategories, category]
+      .filter((cat, index, self) => self.indexOf(cat) === index) // 중복 제거
+      .map((cat) =>
+        Number(
+          Object.keys(houseworkTag).find((key) => houseworkTag[key] === cat)
+        )
+      );
+
+    setSignupSelectedTag(updatedTags);
   };
 
-  const handleNextClick = () => {
-    if (selectedCategory) {
-      navigate("/signupkkaebicomment");
+  const handleNextClick = async () => {
+    const token = localStorage.getItem("token");
+    if (selectedCategories.length > 0) {
+      const tags = selectedCategories.map((category) =>
+        Number(
+          Object.keys(houseworkTag).find(
+            (key) => houseworkTag[key] === category
+          )
+        )
+      );
+
+      console.log("보낼 데이터:", { houseworkTag: tags.join(",") });
+
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_PORT}user/create/houseworktag/`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ houseworkTag: tags.join(",") }),
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("성공적으로 업데이트됨:", data);
+          navigate("/signupkkaebicomment");
+        } else {
+          console.error("태그 업데이트 실패:", response.status);
+          alert("태그 업데이트에 실패했습니다. 다시 시도해주세요.");
+        }
+      } catch (error) {
+        console.error("오류 발생:", error);
+        alert("서버와의 연결 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -61,12 +111,15 @@ const SignupBestWorkPage = () => {
           </Kkaebi>
           <CategorySelector
             categories={categories}
-            selectedCategories={selectedCategory ? [selectedCategory] : []}
+            selectedCategories={selectedCategories}
             onToggle={toggleCategory}
           />
         </Top>
         <Bottom>
-          <NextBtn $isActive={!!selectedCategory} onClick={handleNextClick}>
+          <NextBtn
+            $isActive={selectedCategories.length > 0}
+            onClick={handleNextClick}
+          >
             시작하기
           </NextBtn>
         </Bottom>

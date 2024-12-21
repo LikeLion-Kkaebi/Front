@@ -7,13 +7,23 @@ const KakaoLoginPage = () => {
   const AUTHORIZATION_CODE = urlParams.get("code");
 
   const getData = async () => {
-    const response = await KakaoLogin(AUTHORIZATION_CODE);
-    console.log(response);
+    try {
+      const response = await KakaoLogin(AUTHORIZATION_CODE);
+      console.log(response);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (AUTHORIZATION_CODE) {
+      getData();
+    } else {
+      console.error("Authorization code is missing.");
+      alert("로그인에 실패했습니다. 다시 시도해주세요.");
+      window.location.replace("/");
+    }
+  }, [AUTHORIZATION_CODE]);
 
   return <></>;
 };

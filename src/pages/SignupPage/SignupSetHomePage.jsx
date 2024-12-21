@@ -33,6 +33,7 @@ const SignupSetHomePage = () => {
   };
 
   const handleNextClick = async () => {
+    const token = localStorage.getItem("token");
     if (!isButtonActive || loading) return;
 
     setLoading(true);
@@ -44,7 +45,7 @@ const SignupSetHomePage = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ housename: inputValue.trim() }),
         }
@@ -132,7 +133,7 @@ const Container = styled.div`
   padding: 0 20px;
   background-color: #fafafa;
   height: calc(100vh - 132px); /* Header 패딩과 NextBtn 마진 포함 */
-  overflow: hidden; /* 스크롤 숨기기 */
+  overflow: hidden;
   padding-bottom: 74px;
 `;
 

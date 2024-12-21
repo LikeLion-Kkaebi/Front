@@ -37,6 +37,7 @@ const SignupCodeInputPage = () => {
   };
 
   const handleSubmit = async () => {
+    const token = localStorage.getItem("token");
     const fullCode = code.join(""); // 입력된 코드 합치기
     if (!isButtonActive || loading) return;
 
@@ -49,7 +50,7 @@ const SignupCodeInputPage = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ housecode: fullCode }),
         }
@@ -151,7 +152,7 @@ const Container = styled.div`
   padding: 0 20px;
   background-color: #fafafa;
   height: calc(100vh - 132px); /* Header 패딩과 NextBtn 마진 포함 */
-  overflow: hidden; /* 스크롤 숨기기 */
+  overflow: hidden;
   padding-bottom: 74px;
 `;
 
@@ -212,12 +213,12 @@ const Input = styled.input`
   font-size: 24px;
   font-style: normal;
   font-weight: 400;
-  line-height: 1; /* 수직 중앙 정렬 */
+  line-height: 1;
   text-align: center;
 
   &:focus {
-    border: 0.5px solid #000; /* 포커스 시 검정색 테두리 */
-    outline: none; /* 기본 포커스 효과 제거 */
+    border: 0.5px solid #000;
+    outline: none;
   }
 `;
 const ErrorMessage = styled.div`

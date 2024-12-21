@@ -58,18 +58,17 @@ const SignupNamePage = () => {
     handleDragEnd();
   };
 
-  // Shared Logic for Drag End
   const handleDragEnd = () => {
     if (translateXRef.current > 50) {
-      // Swipe left
+      // 왼쪽으로 스와이프
       setSelectedCharacter((prev) =>
         prev === 0 ? characters.length - 1 : prev - 1
       );
     } else if (translateXRef.current < -50) {
-      // Swipe right
+      // 오른쪽으로 스와이프
       setSelectedCharacter((prev) => (prev + 1) % characters.length);
     }
-    translateXRef.current = 0; // Reset drag distance
+    translateXRef.current = 0; // 드래그 초기화
   };
 
   return (
@@ -95,13 +94,13 @@ const SignupNamePage = () => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            onDragStart={(e) => e.preventDefault()} // Prevent container drag
+            onDragStart={(e) => e.preventDefault()}
           >
             <Character>
               <CharacterImg
                 src={characters[selectedCharacter].src}
                 alt={characters[selectedCharacter].label}
-                onDragStart={(e) => e.preventDefault()} // Prevent image drag
+                onDragStart={(e) => e.preventDefault()}
               />
             </Character>
           </CarouselContainer>
@@ -118,6 +117,7 @@ const SignupNamePage = () => {
         <Bottom>
           <NextBtn
             onClick={async () => {
+              const token = localStorage.getItem("token");
               const payload = {
                 character: characters[selectedCharacter].id.toString(),
               };
@@ -130,7 +130,7 @@ const SignupNamePage = () => {
                     method: "PUT",
                     headers: {
                       "Content-Type": "application/json",
-                      Authorization: `Bearer ${process.env.REACT_APP_AUTH_TOKEN}`,
+                      Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify(payload),
                   }
@@ -140,7 +140,6 @@ const SignupNamePage = () => {
                   const data = await response.json();
                   console.log("API 성공:", data);
 
-                  // 성공 시 다음 페이지로 이동
                   navigate("/signupbestwork", {
                     state: payload,
                   });
@@ -188,7 +187,7 @@ const Container = styled.div`
   padding: 0 20px;
   background-color: #fafafa;
   height: calc(100vh - 132px); /* Header 패딩과 NextBtn 마진 포함 */
-  overflow: hidden; /* 스크롤 숨기기 */
+  overflow: hidden;
   padding-bottom: 74px;
 `;
 
@@ -206,7 +205,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const KkaebiProfile = styled.img`
@@ -221,7 +220,7 @@ const Comment = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const CarouselContainer = styled.div`
@@ -259,7 +258,7 @@ const CharacterImg = styled.img.attrs({
 const IndicatorContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 16px; /* 위쪽과 간격 추가 */
+  margin-top: 16px;
   gap: 14px;
 `;
 
