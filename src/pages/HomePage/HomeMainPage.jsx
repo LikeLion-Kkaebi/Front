@@ -22,25 +22,66 @@ const characterImages = {
 
 const HomeMainPage = () => {
   const navigate = useNavigate();
-  const [mockData, setMockData] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [familyData, setFamilyData] = useState(null);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    // Mock data fetch
-    fetch("/homeMockdata.json")
-      .then((res) => res.json())
-      .then((data) => setMockData(data));
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_PORT}home/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setUserData(data);
+        } else {
+          console.error("Failed to fetch user data", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
 
-    fetch("/homeFamily.json")
-      .then((res) => res.json())
-      .then((data) => setFamilyData(data));
+    const fetchFamilyData = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_PORT}home/family/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          setFamilyData(data);
+        } else {
+          console.error("Failed to fetch family data", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching family data:", error);
+      }
+    };
+
+    fetchUserData();
+    fetchFamilyData();
   }, []);
 
-  if (!mockData || !familyData) {
+  if (!userData || !familyData) {
     return <div></div>; // 데이터 로드 전 로딩 상태
   }
 
-  const { house, nickname, userCharacter, tasks, selected_tags } = mockData;
+  const { house, nickname, userCharacter, tasks, selected_tags } = userData;
   const { today_completion_rate, level } = tasks;
   const { family } = familyData;
 
@@ -86,56 +127,72 @@ const HomeMainPage = () => {
               <Tag key={tag.id}>{tag.name}</Tag>
             ))}
           </Tags>
-          <FamilyCompletionBar>
+          <CompletionBar>
             <CompletionText>
               <CompletionRate>오늘의 할 일</CompletionRate>
-              <RateText> {`${today_completion_rate} 완료`}</RateText>
+              <RateText>
+                {today_completion_rate !== "none"
+                  ? `${today_completion_rate} 완료`
+                  : ""}
+              </RateText>
             </CompletionText>
-            <ProgressBar>
-              <Progress
-                style={{
-                  width: today_completion_rate,
-                }}
-              />
-            </ProgressBar>
-          </FamilyCompletionBar>
+            {today_completion_rate !== "none" ? (
+              <ProgressBar>
+                <Progress
+                  style={{
+                    width: today_completion_rate,
+                  }}
+                />
+              </ProgressBar>
+            ) : (
+              <NoTaskMessage>오늘은 할 일이 없어요.</NoTaskMessage>
+            )}
+          </CompletionBar>
         </ProfileSection>
+        {/* 식구들 정보 */}
         <Bottom>
           <Family>식구들</Family>
-          {family.map((member, index) => (
-            <FamilyItem key={index}>
-              {/* character 데이터를 사용하여 이미지를 출력 */}
-              <FamilyProfileImage
-                src={characterImages[member.character]}
-                alt="Family Character"
-              />
-
-              <FamilyGroup>
-                <Info>
-                  <FamilyNickname>{member.nickname}</FamilyNickname>
-                  <FamilyLevel>{member.level}</FamilyLevel>
-                </Info>
-                <BarGroup>
-                  {member.today_completion_rate === "none" ? (
-                    <NoTaskText>오늘은 할 일이 없어요.</NoTaskText>
-                  ) : (
-                    <>
-                      <CompletionBar>
-                        <FamilyProgress
-                          style={{
-                            width: member.today_completion_rate,
-                          }}
-                        />
-                      </CompletionBar>
-                      <FamilyCompletionRate>
-                        {member.today_completion_rate}
-                      </FamilyCompletionRate>
-                    </>
-                  )}
-                </BarGroup>
-              </FamilyGroup>
-            </FamilyItem>
-          ))}
+          {family.length > 0 ? (
+            family.map((member, index) => (
+              <FamilyItem key={index}>
+                {/* character 데이터를 사용하여 이미지를 출력 */}
+                <FamilyProfileImage
+                  src={characterImages[member.character]}
+                  alt="Family Character"
+                />
+                <FamilyGroup>
+                  <Info>
+                    <FamilyNickname>{member.nickname}</FamilyNickname>
+                    <FamilyLevel>{member.level}</FamilyLevel>
+                  </Info>
+                  <BarGroup>
+                    {member.today_completion_rate === "none" ? (
+                      <NoTaskText>오늘은 할 일이 없어요.</NoTaskText>
+                    ) : (
+                      <>
+                        <FamilyCompletionBar>
+                          <FamilyProgress
+                            style={{
+                              width: member.today_completion_rate,
+                            }}
+                          />
+                        </FamilyCompletionBar>
+                        <FamilyCompletionRate>
+                          {member.today_completion_rate}
+                        </FamilyCompletionRate>
+                      </>
+                    )}
+                  </BarGroup>
+                </FamilyGroup>
+              </FamilyItem>
+            ))
+          ) : (
+            <NoFamilyMessage>
+              아직 식구가 없어요.
+              <br />
+              식구를 추가해 주세요.
+            </NoFamilyMessage>
+          )}
         </Bottom>
       </Container>
     </>
@@ -213,7 +270,7 @@ const Arrow = styled.div`
   display: flex;
 `;
 
-// 프로필 섹션
+// 내 정보
 const ProfileSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -287,7 +344,16 @@ const Tag = styled.div`
   line-height: normal;
 `;
 
-const FamilyCompletionBar = styled.div`
+const NoTaskMessage = styled.div`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+  margin-top: 12px;
+`;
+
+const CompletionBar = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -338,6 +404,17 @@ const Bottom = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 40px;
+`;
+
+const NoFamilyMessage = styled.div`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  text-align: center;
+  margin-top: 20px;
+  line-height: 1.5;
 `;
 
 const Family = styled.div`
@@ -414,7 +491,7 @@ const NoTaskText = styled.div`
   line-height: normal;
 `;
 
-const CompletionBar = styled.div`
+const FamilyCompletionBar = styled.div`
   display: flex;
   height: 7px;
   align-items: center;
