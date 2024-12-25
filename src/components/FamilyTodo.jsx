@@ -1,31 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import styled, { createGlobalStyle } from "styled-components";
-import { useNavigate, useLocation } from "react-router-dom";
-
-import instance from "../api/axios";
-import TodoCategory from "./TodoCategory";
-import NoCheck from "../images/NoCheck.svg";
-import CheckPurple from "../images/CheckPurple.svg";
 import profile from "../images/RedCircle.svg";
 
-const FamilyTodo = ({}) => {
+const FamilyTodo = ({ task }) => {
+  const { nickname } = task.user;
+  const { tagid, houseworkPlace, houseworkDetail } = task.tag;
+  const isDone = task.houseworkDone;
+
   return (
-    <>
+    <Container>
       <GlobalStyle />
-      <Container>
-        <Img src={profile} alt="프로필사진" />
-        <Wrapper>
-          <NameWrapper>
-            <Name>반짝반짝</Name>
-            <FinishBtn>완료</FinishBtn>
-          </NameWrapper>
-          <CategoryWrapper>
-            <TodoCategory name="거실" />
-            <TodoCategory name="물걸레" />
-          </CategoryWrapper>
-        </Wrapper>
-      </Container>
-    </>
+      <Img src={profile} alt="프로필사진" />
+      <Wrapper>
+        <NameWrapper>
+          <Name>{nickname}</Name>
+          <FinishBtn isDone={isDone}>{isDone ? "완료" : "미완료"}</FinishBtn>
+        </NameWrapper>
+        <CategoryWrapper>
+          <Category>{tagid}</Category>
+          <Category>{houseworkPlace}</Category>
+          <Category>{houseworkDetail}</Category>
+        </CategoryWrapper>
+      </Wrapper>
+    </Container>
   );
 };
 
@@ -98,7 +95,8 @@ const FinishBtn = styled.div`
   align-items: center;
   gap: 10px;
   border-radius: 4px;
-  background: var(--key_purple, #aa91e8);
+  background: ${({ isDone }) =>
+    isDone ? "var(--key_purple, #aa91e8)" : "#bebebe"};
   color: var(--white, #f2f2f2);
   text-align: center;
   font-size: 12px;

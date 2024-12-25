@@ -1,43 +1,68 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import GlobalStyle from "../../style/GlobalStyle";
 import SignupBackBtn from "../../images/SignupBackBtn.svg";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
-import RedCImg from "../../images/character/피부미인.png";
-import YellowCImg from "../../images/character/머리숱부자.png";
-import BlackCImg from "../../images/character/핑크수집가.png";
-import GreenCImg from "../../images/character/고민해결사.png";
-import BlueCImg from "../../images/character/매듭의달인.png";
+
+import empty1Img from "../../images/character/빈피부미인.svg";
+import empty2Img from "../../images/character/빈머리숱부자.svg";
+import empty3Img from "../../images/character/빈핑크수집가.svg";
+import empty4Img from "../../images/character/빈고민해결사.svg";
+import empty5Img from "../../images/character/빈매듭의달인.svg";
 
 import { useFamilyStore } from "../../stores/FamilyStore";
 import BackHeader from "../../components/BackHeader";
 import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 import instance from "axios";
 
-const characters = [
-  { id: 1, src: RedCImg, label: "피부 미인" },
-  { id: 2, src: YellowCImg, label: "머리숱 부자" },
-  { id: 3, src: BlackCImg, label: "핑크 수집가" },
-  { id: 4, src: GreenCImg, label: "고민 해결사" },
-  { id: 5, src: BlueCImg, label: "매듭의 달인" },
-];
+const emptyImages = {
+  1: empty1Img,
+  2: empty2Img,
+  3: empty3Img,
+  4: empty4Img,
+  5: empty5Img,
+};
 
 const AskTodoPage = () => {
   const navigate = useNavigate();
-  const [selectedCharacter, setSelectedCharacter] = useState(0);
-
-  const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
-  const nickname = useFamilyStore((state) => state.nickname);
-
-  // Zustand 상태 가져오기 (최적화)
   const houseworkPlace = useHouseworkTagStore((state) => state.houseworkPlace);
   const houseworkDetail = useHouseworkTagStore(
     (state) => state.houseworkDetail
   );
+  const houseworkTag = useHouseworkTagStore((state) => state.houseworkTag);
   const selectedTag = useHouseworkTagStore((state) => state.selectedTag);
   const setSelectedTag = useHouseworkTagStore((state) => state.setSelectedTag);
+  const [tagValue, setTagValue] = useState("");
+  const location = useLocation();
+  const { selectedUser } = location.state || {};
+  const [selectedCharacter, setSelectedCharacter] = useState(0);
+  const { nickname, characterImage } = selectedUser;
+  const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
+
+  console.log("selectedUser 값:", selectedUser);
+  console.log("characterImage 값:", characterImage);
+
+  useEffect(() => {
+    // tagNumber가 변경될 때마다 store에서 value 찾기
+    if (selectedTag && houseworkTag[selectedTag]) {
+      setTagValue(houseworkTag[selectedTag]); // 번호에 해당하는 value 저장
+    } else {
+      setTagValue("유효하지 않은 태그입니다."); // 유효하지 않은 번호 처리
+    }
+  }, [selectedTag, houseworkTag]);
+
+  if (!selectedUser) {
+    return (
+      <div>
+        데이터를 찾을 수 없습니다.
+        <button onClick={() => navigate(-1)}>돌아가기</button>
+      </div>
+    );
+  }
+
+  // Zustand 상태 가져오기 (최적화)
 
   const handleConfirmClick = async () => {
     const payload = {
@@ -49,7 +74,7 @@ const AskTodoPage = () => {
     console.log("POST 데이터:", payload);
 
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("token");
       const response = await instance.post(
         `${process.env.REACT_APP_SERVER_PORT}housework/posting/`,
         payload,
@@ -63,7 +88,36 @@ const AskTodoPage = () => {
 
       if (response.status === 200) {
         console.log("POST 성공");
-        navigate("/month");
+
+        const houseworkManager = response.data.data.user.userid;
+        const houseworkId = response.data.data.houseworkId;
+
+        // 두 번째 요청 (putManager와 동일한 API 호출)
+        const putPayload = {
+          housework_manager: houseworkManager,
+          houseworkId: houseworkId,
+        };
+
+        console.log("PUT 데이터:", putPayload);
+
+        // 두 번째 요청
+        const putResponse = await instance.post(
+          `${process.env.REACT_APP_SERVER_PORT}housework/manager/`,
+          putPayload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (putResponse.status === 200) {
+          console.log("PUT 성공");
+          navigate("/month"); // 성공하면 월별 페이지로 이동
+        } else {
+          console.error("PUT 실패");
+        }
       } else {
         console.error("POST 실패");
       }
@@ -84,9 +138,10 @@ const AskTodoPage = () => {
           </Kkaebi>
           <CarouselContainer>
             <Character>
+              <TextInfo>{`${tagValue} / ${houseworkPlace} / ${houseworkDetail}`}</TextInfo>
               <CharacterImg
-                src={characters[selectedCharacter].src}
-                alt={characters[selectedCharacter].label}
+                src={emptyImages[characterImage]}
+                alt="캐릭터 이미지"
               />
             </Character>
           </CarouselContainer>
@@ -154,13 +209,16 @@ const CarouselContainer = styled.div`
 
 const Character = styled.div`
   text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
 `;
 
 const CharacterImg = styled.img.attrs({
   draggable: false,
 })`
-  width: 201px;
-  height: 310px;
+  width: 229px;
+  height: 100%;
 `;
 
 const Bottom = styled.div`
@@ -184,4 +242,17 @@ const NextBtn = styled.button`
   &:hover {
     background-color: #967bd9;
   }
+`;
+
+const TextInfo = styled.div`
+  position: absolute;
+  margin-top: 20px;
+  color: #000;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 21px */
+  letter-spacing: -0.5px;
 `;

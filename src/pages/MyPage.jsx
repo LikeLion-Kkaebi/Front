@@ -10,6 +10,7 @@ import instance from "axios";
 import useImageStore from "../stores/ImageStore";
 
 import Modal from "../components/Modal";
+import X from "../images/X.svg";
 
 import Exit from "../images/Exit.svg";
 import Premium from "../images/Premium.svg";
@@ -17,8 +18,40 @@ import Ranking from "../images/Ranking.svg";
 import People from "../images/People.svg";
 import RightArrow from "../images/RightArrow.svg";
 import Ask from "../images/Ask.svg";
+import award from "../images/award.svg";
+
+import userCharacter1Img from "../images/character/없피부미인.svg";
+import userCharacter2Img from "../images/character/없머리숱부자.svg";
+import userCharacter3Img from "../images/character/없핑크수집가.svg";
+import userCharacter4Img from "../images/character/없고민해결사.svg";
+import userCharacter5Img from "../images/character/없매듭의달인.svg";
+
+import profile1Img from "../images/character/프사피부미인.svg";
+import profile2Img from "../images/character/프사머리숱부자.svg";
+import profile3Img from "../images/character/프사핑크수집가.svg";
+import profile4Img from "../images/character/프사고민해결사.svg";
+import profile5Img from "../images/character/프사매듭의달인.svg";
+
+const characterImages = {
+  1: userCharacter1Img,
+  2: userCharacter2Img,
+  3: userCharacter3Img,
+  4: userCharacter4Img,
+  5: userCharacter5Img,
+};
+
+const profileImages = {
+  1: profile1Img,
+  2: profile2Img,
+  3: profile3Img,
+  4: profile4Img,
+  5: profile5Img,
+};
 
 const MyPage = () => {
+  const token = localStorage.getItem("token");
+  const [noticeVisible, setNoticeVisible] = useState(false);
+
   const navigate = useNavigate();
   const {
     completionRate,
@@ -31,16 +64,12 @@ const MyPage = () => {
 
   const [nickname, setNickname] = useState(""); // 닉네임 상태 추가
 
-  const characterImages = useImageStore((state) => state.characterImages); // 스토어에서 캐릭터 이미지 가져오기
   const [imageNumber, setImageNumber] = useState(null); // API에서 받은 이미지 번호
-  const [selectedImage, setSelectedImage] = useState(""); // 선택된 이미지 경로
-
+  const [userLevel, setUserLevel] = useState("");
   const fetchImageNumber = async () => {
     try {
-      const token = localStorage.getItem("accessToken"); // 토큰 가져오기
-      const response = await instance.post(
+      const response = await instance.get(
         `${process.env.REACT_APP_SERVER_PORT}mypage/user/`,
-
         {
           headers: {
             "Content-Type": "application/json",
@@ -51,8 +80,8 @@ const MyPage = () => {
 
       if (response.status === 200) {
         console.log("API 요청 성공:", response.data);
-        setImageNumber(response.data.characterNumber); // 서버에서 받은 번호 저장
-        const nickname = response.data.nickname;
+        setImageNumber(response.data.userCharacter); // 서버에서 받은 번호 저장
+        setNickname(response.data.nickname);
       } else {
         console.error("API 요청 실패:", response.status);
       }
@@ -66,40 +95,35 @@ const MyPage = () => {
   }, []);
 
   useEffect(() => {
-    // 이미지 번호가 변경되면 스토어에서 이미지 경로 선택
-    if (imageNumber && characterImages[imageNumber]) {
-      setSelectedImage(characterImages[imageNumber]);
-    } else {
-      setSelectedImage(""); // 유효하지 않은 번호 처리
-    }
-  }, [imageNumber, characterImages]);
-
-  useEffect(() => {
-    // Mock data fetch
-    fetch("/homeMockdata.json")
+    // 홈 데이터 요청
+    fetch(`${process.env.REACT_APP_SERVER_PORT}home/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
-        // tasks.today_completion_rate로 completionRate 값 설정
-        const { today_completion_rate } = data.tasks;
-        setCompletionRate(today_completion_rate);
+        const { level, weekly_completion_rate } = data.tasks;
+        setUserLevel(level); // 사용자 레벨 저장
 
-        // completionRate에 따라 activeLevel과 characterImg 설정
-        const level = getLevel(today_completion_rate);
-        setActiveLevel(level);
-        setCharacterImg(characterImages[level]);
-      });
-  }, [setCompletionRate, setActiveLevel, setCharacterImg]);
+        // 레벨에 맞게 activeLevel 설정
+        const levelMap = {
+          "Lv7. 빛": 7,
+          "Lv6. 청소 마법사": 6,
+          "Lv5. 향기 탐험가": 5,
+          "Lv4. 먼지 사냥꾼": 4,
+          "Lv3. 티끌 수집가": 3,
+          "Lv2. 먼지": 2,
+          "Lv1. 미세먼지": 1,
+        };
+        setActiveLevel(levelMap[level]);
 
-  // completionRate에 따라 활성화된 레벨 계산
-  const getLevel = (rate) => {
-    if (rate === 100) return 7;
-    if (rate >= 99) return 6;
-    if (rate >= 80) return 5;
-    if (rate >= 60) return 4;
-    if (rate >= 40) return 3;
-    if (rate >= 20) return 2;
-    return 1; // Lv1은 0%
-  };
+        setCompletionRate(weekly_completion_rate);
+        setCharacterImg(characterImages[levelMap[level]]);
+      })
+      .catch((error) => console.error("Error fetching home data:", error));
+  }, [token, setCompletionRate, setActiveLevel, setCharacterImg]);
 
   const [modal, setModal] = useState(false);
   // 모달창의 state를 바꾸는 함수 작성 (true <-> false)
@@ -109,7 +133,7 @@ const MyPage = () => {
 
   const goExit = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("token");
       const response = await instance.delete(
         `${process.env.REACT_APP_SERVER_PORT}mypage/remove-account/`,
         {
@@ -119,11 +143,25 @@ const MyPage = () => {
         }
       );
       console.log(response);
-      navigate("/login");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("housecode");
+      localStorage.removeItem("housename");
+      localStorage.removeItem("nickname");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_id");
+      navigate("/");
     } catch (error) {
       console.error(error);
       alert("계정 삭제 중 오류가 발생했습니다.");
     }
+  };
+
+  const toggleNotice = () => {
+    setNoticeVisible(!noticeVisible);
+  };
+
+  const closeNotice = () => {
+    setNoticeVisible(false);
   };
 
   return (
@@ -135,10 +173,10 @@ const MyPage = () => {
         <Top>
           <ProfileContainer>
             <ProfileInfo>
-              <LevelName>{`${nickname}`}</LevelName>
-              <LevelBadge>Lv.3. 티끌수집가</LevelBadge>
+              <LevelName>{nickname}</LevelName>
+              <LevelBadge>{userLevel}</LevelBadge>
               <CharacterIcon
-                src={selectedImage}
+                src={characterImages[imageNumber]}
                 alt={`선택된 캐릭터 ${imageNumber}`}
               />
             </ProfileInfo>
@@ -150,7 +188,34 @@ const MyPage = () => {
               <img src={Ranking} alt="Ranking" />
               <Label>이번 주 나의 레벨</Label>
 
-              <img src={Ask} alt="?" />
+              <NoticeWrapper2>
+                <Notice onClick={toggleNotice}>
+                  <img src={Ask} alt="?" />
+                  {noticeVisible && (
+                    <NoticeExplain>
+                      <NoticeWrapper>
+                        <NoticeWrapper3>
+                          <img src={award} alt="award" />
+                          <NoticeTitle>레벨 등급</NoticeTitle>
+                        </NoticeWrapper3>
+
+                        <NoticeX onClick={closeNotice}>
+                          <img src={X} alt="Close" />
+                        </NoticeX>
+                      </NoticeWrapper>
+                      <NoticeContent>
+                        Lv1. 미세먼지 : 0% 완료 <br />
+                        Lv2. 먼지 : 20% 완료 <br />
+                        Lv3. 티끌 수집가 : 40% 완료 <br />
+                        Lv4. 먼지 사냥꾼 : 60% 완료 <br />
+                        Lv5. 향기 탐험가 : 80% 완료 <br />
+                        Lv6. 청소 마법사 : 99% 완료 <br />
+                        Lv7. 빛 : 100% 완료
+                      </NoticeContent>
+                    </NoticeExplain>
+                  )}
+                </Notice>
+              </NoticeWrapper2>
             </TopContainer>
 
             <ProgressBar>
@@ -158,7 +223,7 @@ const MyPage = () => {
                 <ProgressItem key={level} active={level <= activeLevel}>
                   {level === activeLevel && (
                     <ProfileImage
-                      src={characterImg}
+                      src={profileImages[imageNumber]}
                       alt="User Character"
                       active={true}
                     />
@@ -234,7 +299,9 @@ const ProfileImage = styled.img`
   height: 27px;
 `;
 
-const CharacterIcon = styled.img``;
+const CharacterIcon = styled.img`
+  width: 98px;
+`;
 
 const TopContainer = styled.div`
   display: flex;
@@ -247,6 +314,7 @@ const ProfileInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 12px;
 `;
 
@@ -366,4 +434,58 @@ const BtnContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+`;
+
+const NoticeWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+  justify-content: space-between;
+
+  img {
+    width: 10px;
+  }
+`;
+
+const NoticeWrapper2 = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const NoticeWrapper3 = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+`;
+
+const Notice = styled.div`
+  position: relative;
+  cursor: pointer;
+`;
+
+const NoticeExplain = styled.div`
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.1);
+  width: 130px;
+  top: 30px;
+  z-index: 30;
+  position: absolute;
+  padding: 20px;
+`;
+
+const NoticeTitle = styled.div`
+  font-weight: bold;
+  font-size: 12px;
+  color: #222222;
+`;
+
+const NoticeX = styled.div``;
+
+const NoticeContent = styled.div`
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 15px;
+  color: #222222;
 `;

@@ -10,38 +10,62 @@ import FamilyTodo from "../components/FamilyTodo";
 import add from "../images/add.svg";
 import Copy from "../images/Copy.svg";
 import FamilyList from "../components/FamilyList";
+import instance from "axios";
+import Delete from "../images/Delete.svg";
+
+import userCharacter1Img from "../images/character/프사피부미인.svg";
+import userCharacter2Img from "../images/character/프사머리숱부자.svg";
+import userCharacter3Img from "../images/character/프사핑크수집가.svg";
+import userCharacter4Img from "../images/character/프사고민해결사.svg";
+import userCharacter5Img from "../images/character/프사매듭의달인.svg";
+
+const characterImages = {
+  1: userCharacter1Img,
+  2: userCharacter2Img,
+  3: userCharacter3Img,
+  4: userCharacter4Img,
+  5: userCharacter5Img,
+};
 
 const FamilyPage = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState("myTasks");
-  const [adjustedMargin, setAdjustedMargin] = useState(85);
-
-  // Zustand에서 상태와 상태 변경 함수 가져오기
-  const { setYear, setMonth, setDay, month, day } = useDateStore();
-
-  // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
-  const queryYear = searchParams.get("year");
-  const queryMonth = searchParams.get("month");
-  const queryDay = searchParams.get("date");
+  const housecode = localStorage.getItem("housecode");
+  const [familyData, setFamilyData] = useState(null);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const totalHeight = document.body.scrollHeight; // 콘텐츠의 총 높이
-    const windowHeight = window.innerHeight; // 기기의 화면 높이
-    if (totalHeight > windowHeight) {
-      const marginAdjustment = totalHeight - windowHeight;
-      setAdjustedMargin(85 - marginAdjustment); // 화면이 짧으면 margin을 조정
-    }
+    const fetchFamilyData = async () => {
+      try {
+        const response = await instance.get(
+          `${process.env.REACT_APP_SERVER_PORT}mypage/member/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+
+          setFamilyData(data.housemembers);
+          console.log(familyData);
+        } else {
+          console.error("Failed to fetch family data", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching family data:", error);
+      }
+    };
+
+    fetchFamilyData();
   }, []);
 
-  // 상태 업데이트
-  useEffect(() => {
-    if (queryYear && queryMonth && queryDay) {
-      setYear(Number(queryYear));
-      setMonth(Number(queryMonth));
-      setDay(Number(queryDay)); // queryDay를 setDay에 제대로 전달
-    }
-  }, [queryYear, queryMonth, queryDay, setYear, setMonth, setDay]);
+  if (!familyData) {
+    return <div>로딩중</div>; // 데이터 로드 전 로딩 상태
+  }
+
+  const { family } = familyData;
 
   return (
     <>
@@ -51,13 +75,34 @@ const FamilyPage = () => {
         <Top>
           <Text>우리집 코드</Text>
           <Code>
-            <p>123a</p>
+            <p>{housecode}</p>
             <img src={Copy} />
           </Code>
         </Top>
         <Top>
           <Text>식구들</Text>
-          <FamilyList />
+          {family.length > 0 ? (
+            family.map((member, index) => (
+              <Container2 key={index}>
+                <Wrapper2>
+                  <Img
+                    src={characterImages[member.character]}
+                    alt="Family Character"
+                  />
+                  <NameWrapper>
+                    <Name>{member.nickname}</Name>
+                  </NameWrapper>
+                </Wrapper2>
+                <DeleteImg src={Delete} alt="삭제 버튼" />
+              </Container2>
+            ))
+          ) : (
+            <NoFamilyMessage>
+              아직 식구가 없어요.
+              <br />
+              식구를 추가해 주세요.
+            </NoFamilyMessage>
+          )}
         </Top>
         <Bottom></Bottom>
       </Container>
@@ -164,4 +209,59 @@ const Floating = styled.img`
 const Bottom = styled.div`
   display: flex;
   justify-content: flex-end;
+`;
+
+const NoFamilyMessage = styled.div`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  text-align: center;
+  margin-top: 20px;
+  line-height: 1.5;
+`;
+
+const Container2 = styled.div`
+  display: flex;
+  padding: 20px 24px;
+  align-items: center;
+  gap: 12px;
+  align-self: stretch;
+  margin-top: 12px;
+  border-radius: 11px;
+  background: #fff;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const Img = styled.img`
+  width: 46px;
+  height: 46px;
+`;
+
+const DeleteImg = styled.img`
+  width: 24px;
+  height: 24px;
+`;
+
+const Wrapper2 = styled.div`
+  display: flex;
+  gap: 21px;
+`;
+
+const NameWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+`;
+
+const Name = styled.div`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
 `;
