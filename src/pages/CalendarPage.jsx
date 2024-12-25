@@ -12,6 +12,8 @@ import MyTodo from "../components/MyTodo";
 
 const CalendarPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [monthData, setMonthData] = useState([]);
+  const [todayTodos, setTodayTodos] = useState([]);
   const navigate = useNavigate();
   const today = new Date();
 
@@ -31,15 +33,42 @@ const CalendarPage = () => {
     setCurrentDate(newDate);
   };
 
-  const handleDateClick = async (selectedDay) => {
+  const handleDateClick = (selectedDay) => {
     if (selectedDay) {
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
-
-      // 날짜를 쿼리스트링으로 navigate
       navigate(`/day?year=${year}&month=${month}&date=${selectedDay}`);
     }
   };
+
+  useEffect(() => {
+    const fetchMonthData = async () => {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const token = localStorage.getItem("token");
+
+      const response = await instance.get(
+        `${process.env.REACT_APP_SERVER_PORT}calendar/${year}/${month}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setMonthData(response.data.data);
+        console.log(response.data);
+        const todayString = today.toISOString().split("T")[0];
+        const todayTasks = response.data.data.filter(
+          (task) => task.houseworkDate === todayString
+        );
+        setTodayTodos(todayTasks);
+      }
+    };
+
+    fetchMonthData();
+  }, [currentDate]);
 
   const renderDays = () => {
     const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
@@ -59,19 +88,18 @@ const CalendarPage = () => {
     const lastDate = new Date(year, month + 1, 0).getDate();
 
     const dates = [];
-
-    // 이전 월의 마지막 날짜 계산
     const prevMonthLastDate = new Date(year, month, 0).getDate();
     for (let i = firstDay - 1; i >= 0; i--) {
       dates.push({ date: prevMonthLastDate - i, type: "prev" });
     }
-
-    // 현재 월의 날짜 추가
     for (let i = 1; i <= lastDate; i++) {
-      dates.push({ date: i, type: "current" });
+      const hasTask = monthData.some(
+        (task) =>
+          new Date(task.houseworkDate).getDate() === i &&
+          new Date(task.houseworkDate).getMonth() === month
+      );
+      dates.push({ date: i, type: "current", hasTask });
     }
-
-    // 다음 달의 날짜 추가
     const remainingDays = (7 - (dates.length % 7)) % 7;
     for (let i = 1; i <= remainingDays; i++) {
       dates.push({ date: i, type: "next" });
@@ -95,6 +123,7 @@ const CalendarPage = () => {
                 }
               >
                 {dateObj.date}
+                {dateObj.hasTask && <TaskIndicator />}
               </DateBox>
             ))}
           </Week>
@@ -123,8 +152,17 @@ const CalendarPage = () => {
         {renderDates()}
         <MyTodoContainer>
           <Name>{`${today.getMonth() + 1}월 ${today.getDate()}일`}</Name>
-          <MyTodo categoryName="카테고리 이름" removeStyles />
-          <MyTodo categoryName="카테고리 이름" removeStyles />
+          {todayTodos.map((todo, index) => (
+            <MyTodo
+              key={index}
+              categoryName={todo.tag.tagid}
+              houseworkPlace={todo.houseworkPlace}
+              houseworkDetail={todo.houseworkDetail}
+              houseworkId={todo.houseworkId}
+              houseworkDone={todo.houseworkDone}
+              removeStyles
+            />
+          ))}
         </MyTodoContainer>
       </Container>
     </>
@@ -153,6 +191,7 @@ const MyTodoContainer = styled.div`
   align-self: stretch;
   background: #fff;
   margin-top: 20px;
+  height: 30%;
 `;
 
 const HeaderContainer = styled.div`
@@ -198,35 +237,41 @@ const DatesContainer = styled.div`
 
 const Week = styled.div`
   display: flex;
-  justify-content: ${({ isLastWeek }) =>
-    isLastWeek ? "flex-start" : "space-between"};
 `;
 
 const DateBox = styled.div`
   flex: 1;
-  height: 48px;
-
+  margin: 15px;
+  padding: 5px 0px 5px 0px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: center; /* 숫자가 세로로 중앙 정렬 */
   align-items: center;
   cursor: pointer;
   color: ${({ type }) =>
-    type === "prev" || type === "next"
-      ? "#ccc"
-      : "inherit"}; // 이전/다음 달 날짜는 회색
+    type === "prev" || type === "next" ? "#ccc" : "inherit"};
+  position: relative; /* TaskIndicator 위치를 조정하기 위해 추가 */
+
   &:hover {
     background: ${({ type }) =>
       type === "current" ? "var(--key_purple, #aa91e8)" : "none"};
     border-radius: ${({ type }) => (type === "current" ? "100%" : "none")};
     color: ${({ type }) => (type === "current" ? "white" : "inherit")};
   }
+
+  & > .task-indicator {
+    /* TaskIndicator를 직접 다루기 위한 클래스 */
+    width: 7px;
+    height: 7px;
+    background: #aa91e8;
+    border-radius: 50%;
+    margin-top: 10px;
+    position: absolute;
+    top: 20px;
+  }
 `;
-const Line = styled.div`
-  width: 100%;
-  height: 1px;
-  background: #e1e1e1;
-  margin: 10px 0;
-`;
+
+const TaskIndicator = () => <div className="task-indicator" />;
 
 const Name = styled.div`
   color: #000;

@@ -1,10 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useFamilyStore } from "../stores/FamilyStore";
 
+import userCharacter1Img from "../images/character/프사피부미인.svg";
+import userCharacter2Img from "../images/character/프사머리숱부자.svg";
+import userCharacter3Img from "../images/character/프사핑크수집가.svg";
+import userCharacter4Img from "../images/character/프사고민해결사.svg";
+import userCharacter5Img from "../images/character/프사매듭의달인.svg";
+
+const characterImages = {
+  1: userCharacter1Img,
+  2: userCharacter2Img,
+  3: userCharacter3Img,
+  4: userCharacter4Img,
+  5: userCharacter5Img,
+};
+
 const FamilySelector = ({ selectedCategories, onToggle }) => {
-  // FamilyStore에서 데이터 가져오기
   const familyProfiles = useFamilyStore((state) => state.profiles);
+  const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
+
+  useEffect(() => {
+    fetchProfiles();
+  }, [fetchProfiles]);
 
   return (
     <CategoryContainer>
@@ -15,7 +33,7 @@ const FamilySelector = ({ selectedCategories, onToggle }) => {
           onClick={() => onToggle(profile.nickname)}
         >
           <CharacterImage
-            src={profile.characterImage}
+            src={characterImages[profile.characterImage]}
             alt={`${profile.nickname}의 캐릭터`}
           />
           {profile.nickname}
@@ -27,7 +45,6 @@ const FamilySelector = ({ selectedCategories, onToggle }) => {
 
 export default FamilySelector;
 
-// 스타일 컴포넌트
 const CategoryContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -47,9 +64,6 @@ const CategoryButton = styled.button`
     props.$isSelected ? "0px 0px 7px 0px rgba(170, 145, 232, 0.5)" : "default"};
   font-family: Pretendard;
   font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
   cursor: pointer;
 `;
 
