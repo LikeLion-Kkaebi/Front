@@ -12,16 +12,35 @@ const HomeStatisticsPage = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch("/homeDistribution.json")
-      .then((response) => response.json())
-      .then((json) => {
-        setData({
-          ...json,
-          distribution: json.distribution || [], // 분배 배열 기본값 설정
-          house_completion_rate: json.house_completion_rate || "0%", // 완료율 기본값 설정
-        });
-      })
-      .catch((error) => console.error("Error fetching mockdata:", error));
+    const token = localStorage.getItem("token");
+    const fetchStatistics = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_PORT}home/distribution/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const json = await response.json();
+          setData({
+            ...json,
+            distribution: json.distribution || [], // 분배 배열 기본값 설정
+            house_completion_rate: json.house_completion_rate || "0%", // 완료율 기본값 설정
+          });
+        } else {
+          console.error("Failed to fetch statistics", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
+      }
+    };
+
+    fetchStatistics();
   }, []);
 
   if (!data) {
