@@ -157,7 +157,7 @@ const HomeMainPage = () => {
               <FamilyItem key={index}>
                 {/* character 데이터를 사용하여 이미지를 출력 */}
                 <FamilyProfileImage
-                  src={characterImages[member.character]}
+                  src={characterImages[member.userCharacter]}
                   alt="Family Character"
                 />
                 <FamilyGroup>
