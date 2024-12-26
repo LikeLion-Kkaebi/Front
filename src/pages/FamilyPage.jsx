@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useNavigate, useSearchParams } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import instance from "axios";
 import GlobalStyle from "../style/GlobalStyle";
 import BackHeader from "../components/BackHeader";
-import useDateStore from "../stores/DateStore"; // DateStore 가져오기
-import MyTodo from "../components/MyTodo";
-import FamilyTodo from "../components/FamilyTodo";
-import add from "../images/add.svg";
+import { useFamilyStore } from "../stores/FamilyStore";
 import Copy from "../images/Copy.svg";
-import FamilyList from "../components/FamilyList";
-import instance from "axios";
 import Delete from "../images/Delete.svg";
-
 import userCharacter1Img from "../images/character/프사피부미인.svg";
 import userCharacter2Img from "../images/character/프사머리숱부자.svg";
 import userCharacter3Img from "../images/character/프사핑크수집가.svg";
@@ -30,42 +24,56 @@ const characterImages = {
 const FamilyPage = () => {
   const navigate = useNavigate();
   const housecode = localStorage.getItem("housecode");
-  const [familyData, setFamilyData] = useState(null);
-  const token = localStorage.getItem("token");
+  const familyProfiles = useFamilyStore((state) => state.profiles);
+  const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
+  const currentUserId = localStorage.getItem("user_id"); // 현재 사용자의 userid
 
   useEffect(() => {
-    const fetchFamilyData = async () => {
-      try {
-        const response = await instance.get(
-          `${process.env.REACT_APP_SERVER_PORT}mypage/member/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
+    fetchProfiles();
+  }, [fetchProfiles]);
 
-          setFamilyData(data.housemembers);
-          console.log(familyData);
-        } else {
-          console.error("Failed to fetch family data", response.status);
+  const handleDelete = async (userid) => {
+    // 본인 삭제 방지
+    if (userid === currentUserId) {
+      alert("본인은 삭제할 수 없습니다!");
+      return;
+    }
+
+    try {
+      const response = await instance.delete(
+        `${process.env.REACT_APP_SERVER_PORT}mypage/remove-member/`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Authorization 토큰을 헤더에 추가
+          },
+          data: {
+            userid, // 삭제하려는 식구의 userid
+          },
         }
-      } catch (error) {
-        console.error("Error fetching family data:", error);
+      );
+      if (response.status === 200) {
+        alert(response.data.message); // 성공 시 메세지 표시
+        fetchProfiles(); // 삭제 후 프로필 갱신
       }
-    };
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        const errorMessage = error.response.data.userid[0];
+        if (errorMessage.includes("이 필드는 필수 항목입니다")) {
+          alert("본인은 삭제할 수 없습니다!");
+        } else {
+          alert("삭제 요청에 실패했습니다.");
+        }
+      } else {
+        console.error("Failed to delete member:", error);
+      }
+    }
+  };
 
-    fetchFamilyData();
-  }, []);
-
-  if (!familyData) {
-    return <div>로딩중</div>; // 데이터 로드 전 로딩 상태
-  }
-
-  const { family } = familyData;
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(housecode).then(() => {
+      alert("우리집 코드가 클립보드에 복사되었습니다!");
+    });
+  };
 
   return (
     <>
@@ -76,33 +84,30 @@ const FamilyPage = () => {
           <Text>우리집 코드</Text>
           <Code>
             <p>{housecode}</p>
-            <img src={Copy} />
+            <img src={Copy} alt="Copy" onClick={handleCopyCode} />{" "}
+            {/* Copy 클릭 시 handleCopyCode 실행 */}
           </Code>
         </Top>
         <Top>
           <Text>식구들</Text>
-          {family.length > 0 ? (
-            family.map((member, index) => (
-              <Container2 key={index}>
-                <Wrapper2>
-                  <Img
-                    src={characterImages[member.character]}
-                    alt="Family Character"
-                  />
-                  <NameWrapper>
-                    <Name>{member.nickname}</Name>
-                  </NameWrapper>
-                </Wrapper2>
-                <DeleteImg src={Delete} alt="삭제 버튼" />
-              </Container2>
-            ))
-          ) : (
-            <NoFamilyMessage>
-              아직 식구가 없어요.
-              <br />
-              식구를 추가해 주세요.
-            </NoFamilyMessage>
-          )}
+          {familyProfiles.map((profile) => (
+            <Container2 key={profile.userid}>
+              <Wrapper2>
+                <Img
+                  src={characterImages[profile.characterImage]}
+                  alt={`${profile.nickname}의 캐릭터`}
+                />
+                <NameWrapper>
+                  <Name>{profile.nickname}</Name>
+                </NameWrapper>
+              </Wrapper2>
+              <DeleteImg
+                src={Delete}
+                alt="삭제 버튼"
+                onClick={() => handleDelete(profile.userid)} // 삭제 버튼 클릭 시 handleDelete 실행
+              />
+            </Container2>
+          ))}
         </Top>
         <Bottom></Bottom>
       </Container>
@@ -119,6 +124,7 @@ const Container = styled.div`
   height: calc(100vh); /* Header 패딩과 NextBtn 마진 포함 */
   overflow: hidden; /* 스크롤 숨기기 */
   padding-bottom: 74px;
+  min-width: 390px;
 `;
 
 const Top = styled.div`
@@ -156,70 +162,15 @@ const Code = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+
+  img {
+    cursor: pointer;
+  }
 `;
 
-const TabContainer = styled.div`
-  display: flex;
-  gap: 20px;
-  margin-top: 10px;
-
-  margin-bottom: 9px;
-`;
-
-const Tab = styled.div`
-  position: relative;
-  color: ${(props) => (props.isActive ? "#000" : "#787878")};
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: ${(props) => (props.isActive ? "600" : "400")};
-  line-height: normal;
-  letter-spacing: -0.5px;
-  cursor: pointer;
-  text-align: center;
-`;
-
-const Underline = styled.div`
-  position: absolute;
-  bottom: -5px; /* 텍스트 아래 위치 */
-  left: 0;
-  width: 100%; /* 부모 요소(Tab)의 너비와 동일 */
-  height: 0px;
-  border-bottom: 1.7px solid #000;
-`;
-
-const Floating = styled.img`
-  display: flex;
-  width: 18.824px;
-  height: 16.314px;
-  padding: 23.843px 22.588px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 12.549px;
-  flex-shrink: 0;
-  border-radius: 53.961px;
-  background: var(--purple, #aa91e8);
-  box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  position: fixed; /* 화면에 고정 */
-  bottom: 50px; /* 화면 bottom에서 40px 위 */
-  right: 20px; /* 우측 20px로 위치 */
-`;
 const Bottom = styled.div`
   display: flex;
   justify-content: flex-end;
-`;
-
-const NoFamilyMessage = styled.div`
-  color: #000;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  text-align: center;
-  margin-top: 20px;
-  line-height: 1.5;
 `;
 
 const Container2 = styled.div`
@@ -228,7 +179,6 @@ const Container2 = styled.div`
   align-items: center;
   gap: 12px;
   align-self: stretch;
-  margin-top: 12px;
   border-radius: 11px;
   background: #fff;
   flex-direction: row;
@@ -243,6 +193,7 @@ const Img = styled.img`
 const DeleteImg = styled.img`
   width: 24px;
   height: 24px;
+  cursor: pointer;
 `;
 
 const Wrapper2 = styled.div`

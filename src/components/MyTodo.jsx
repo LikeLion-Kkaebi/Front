@@ -4,6 +4,7 @@ import instance from "../api/axios";
 
 import NoCheck from "../images/NoCheck.svg";
 import CheckPurple from "../images/CheckPurple.svg";
+import useHouseworkTagStore from "../stores/HouseworkTagStore";
 
 const MyTodo = ({
   houseworkID,
@@ -15,6 +16,16 @@ const MyTodo = ({
 }) => {
   // 상태 관리: 이미지를 선택했는지 여부
   const [isChecked, setIsChecked] = useState(houseworkDone); // 초기값을 houseworkDone으로 설정
+  const [tagValue, setTagValue] = useState(""); // 초기값 빈 문자열
+  const houseworkTag = useHouseworkTagStore((state) => state.houseworkTag);
+  // categoryName 변경될 때 한 번만 실행
+  useEffect(() => {
+    if (houseworkTag[categoryName]) {
+      setTagValue(houseworkTag[categoryName]); // 유효한 태그 값 설정
+    } else {
+      setTagValue("유효하지 않은 태그입니다."); // 유효하지 않은 태그 처리
+    }
+  }, [categoryName, houseworkTag]);
 
   // 이미지 클릭 시 상태 토글
   const toggleCheck = async () => {
@@ -52,10 +63,9 @@ const MyTodo = ({
       <GlobalStyle />
       <Container removeStyles={removeStyles}>
         <Front>
-          <Category>{categoryName}</Category>
-          <TodoCategory>
-            {houseworkPlace} {houseworkDetail}
-          </TodoCategory>
+          <Category>{tagValue}</Category>
+          <TodoCategory>{houseworkPlace}</TodoCategory>
+          <TodoCategory>{houseworkDetail}</TodoCategory>
         </Front>
 
         {/* 이미지 클릭 시 상태 변화에 따라 src 변경 */}

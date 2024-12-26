@@ -96,6 +96,7 @@ const DayPage = () => {
 
         if (response.status === 200) {
           setFamilyTasks(response.data.data);
+          console.log("familyTasks:", response.data.data);
         } else {
           console.error("데이터를 가져오는 데 실패했습니다:", response.status);
         }
@@ -142,14 +143,30 @@ const DayPage = () => {
         ) : activeTab === "myTasks" ? (
           myTasks.length > 0 ? (
             myTasks.map((task) => (
-              <MyTodo key={task.houseworkId} categoryName={task.tag.tagid} />
+              <MyTodo
+                key={task.houseworkId}
+                categoryName={task.tag.tagid}
+                houseworkPlace={task.houseworkPlace}
+                houseworkDetail={task.houseworkDetail}
+                houseworkId={task.houseworkId}
+                houseworkDone={task.houseworkDone}
+              />
             ))
           ) : (
             renderEmptyState()
           )
         ) : familyTasks.length > 0 ? (
           familyTasks.map((task) => (
-            <FamilyTodo key={task.houseworkId} data={task} />
+            <FamilyTodo
+              key={task.houseworkId}
+              nickname={task.user.nickname}
+              userCharacter={task.user.userCharacter}
+              categoryName={task.tag.tagid}
+              houseworkPlace={task.houseworkPlace}
+              houseworkDetail={task.houseworkDetail}
+              houseworkId={task.houseworkId}
+              houseworkDone={task.houseworkDone}
+            />
           ))
         ) : (
           renderEmptyState()

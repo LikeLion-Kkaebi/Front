@@ -38,7 +38,7 @@ const AskTodoPage = () => {
   const location = useLocation();
   const { selectedUser } = location.state || {};
   const [selectedCharacter, setSelectedCharacter] = useState(0);
-  const { nickname, characterImage } = selectedUser;
+  const { nickname, userid, characterImage } = selectedUser;
   const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
 
   console.log("selectedUser 값:", selectedUser);
@@ -72,6 +72,7 @@ const AskTodoPage = () => {
     };
 
     console.log("POST 데이터:", payload);
+    console.log("유저 아이디:", userid);
 
     try {
       const token = localStorage.getItem("token");
@@ -86,22 +87,21 @@ const AskTodoPage = () => {
         }
       );
 
-      if (response.status === 200) {
-        console.log("POST 성공");
+      if (response.status === 201) {
+        console.log("POST 성공", response.data);
 
-        const houseworkManager = response.data.data.user.userid;
         const houseworkId = response.data.data.houseworkId;
 
-        // 두 번째 요청 (putManager와 동일한 API 호출)
+        // 두 번째 요청의 payload에 userid 포함
         const putPayload = {
-          housework_manager: houseworkManager,
+          housework_manager: userid, // selectedUser의 userid 추가
           houseworkId: houseworkId,
         };
 
         console.log("PUT 데이터:", putPayload);
 
         // 두 번째 요청
-        const putResponse = await instance.post(
+        const putResponse = await instance.put(
           `${process.env.REACT_APP_SERVER_PORT}housework/manager/`,
           putPayload,
           {
@@ -113,7 +113,8 @@ const AskTodoPage = () => {
         );
 
         if (putResponse.status === 200) {
-          console.log("PUT 성공");
+          console.log("Manager PUT 성공", putResponse.data);
+
           navigate("/month"); // 성공하면 월별 페이지로 이동
         } else {
           console.error("PUT 실패");
