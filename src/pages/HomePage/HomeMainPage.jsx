@@ -94,7 +94,9 @@ const HomeMainPage = () => {
         <SemiHeader>
           <StatisticsBtn onClick={() => navigate("/homestatistics")}>
             <BtnComment>
-              <TodayComment>오늘 럭키비키 하우스의 집안일 현황은?</TodayComment>
+              <TodayComment>
+                이번 주 {house} 하우스의 집안일 현황은?
+              </TodayComment>
               <Check>통계 확인하기</Check>
             </BtnComment>
             <Arrow>
@@ -188,9 +190,9 @@ const HomeMainPage = () => {
             ))
           ) : (
             <NoFamilyMessage>
-              아직 식구가 없어요.
+              아직 등록된 식구가 없어요.
               <br />
-              식구를 추가해 주세요.
+              코드를 공유해 식구를 추가해 보세요.
             </NoFamilyMessage>
           )}
         </Bottom>

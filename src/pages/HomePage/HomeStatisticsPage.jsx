@@ -176,7 +176,7 @@ const HomeStatisticsPage = () => {
         <Section>
           <Kkaebi>
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
-            <Comment1>이번주</Comment1>
+            <Comment1>이번 주</Comment1>
             <Comment2> 집안일 분배 </Comment2>
             <Comment1> 현황이에요.</Comment1>
           </Kkaebi>
@@ -221,7 +221,7 @@ const HomeStatisticsPage = () => {
         <Section>
           <Kkaebi>
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
-            <Comment1>이번주</Comment1>
+            <Comment1>이번 주</Comment1>
             <Comment2> 집안일 완료 </Comment2>
             <Comment1> 현황이에요.</Comment1>
           </Kkaebi>
