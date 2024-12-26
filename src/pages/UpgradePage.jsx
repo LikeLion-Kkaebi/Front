@@ -8,7 +8,6 @@ import useDateStore from "../stores/DateStore"; // DateStore 가져오기
 import KkaebiProfileImg from "../images/KkaebiProfile.svg";
 
 import Copy from "../images/Copy.svg";
-import FamilyList from "../components/FamilyList";
 
 const UpgradePage = () => {
   const navigate = useNavigate();

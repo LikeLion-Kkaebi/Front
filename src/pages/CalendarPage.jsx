@@ -17,6 +17,57 @@ const CalendarPage = () => {
   const navigate = useNavigate();
   const today = new Date();
 
+  // 월 변경 시 데이터 가져오기
+  useEffect(() => {
+    const fetchMonthData = async () => {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const token = localStorage.getItem("token");
+
+      const response = await instance.get(
+        `${process.env.REACT_APP_SERVER_PORT}calendar/${year}/${month}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setMonthData(response.data.data);
+      }
+    };
+
+    fetchMonthData();
+  }, [currentDate]);
+
+  // 오늘의 할 일 가져오기
+  useEffect(() => {
+    const fetchTodayTodos = async () => {
+      const token = localStorage.getItem("token");
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth() + 1;
+      const response = await instance.get(
+        `${process.env.REACT_APP_SERVER_PORT}calendar/${year}/${month}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const todayString = today.toISOString().split("T")[0];
+        const todayTasks = response.data.data.filter(
+          (task) => task.houseworkDate === todayString
+        );
+        setTodayTodos(todayTasks);
+      }
+    };
+
+    fetchTodayTodos();
+  }, []); // 오늘의 할 일은 컴포넌트가 처음 마운트될 때만 호출
+
   const handlePrevMonth = () => {
     const newDate = new Date(
       currentDate.getFullYear(),
@@ -40,35 +91,6 @@ const CalendarPage = () => {
       navigate(`/day?year=${year}&month=${month}&date=${selectedDay}`);
     }
   };
-
-  useEffect(() => {
-    const fetchMonthData = async () => {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth() + 1;
-      const token = localStorage.getItem("token");
-
-      const response = await instance.get(
-        `${process.env.REACT_APP_SERVER_PORT}calendar/${year}/${month}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        setMonthData(response.data.data);
-        console.log(response.data);
-        const todayString = today.toISOString().split("T")[0];
-        const todayTasks = response.data.data.filter(
-          (task) => task.houseworkDate === todayString
-        );
-        setTodayTodos(todayTasks);
-      }
-    };
-
-    fetchMonthData();
-  }, [currentDate]);
 
   const renderDays = () => {
     const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
@@ -98,6 +120,7 @@ const CalendarPage = () => {
           new Date(task.houseworkDate).getDate() === i &&
           new Date(task.houseworkDate).getMonth() === month
       );
+      console.log(i, hasTask); // 각 날짜에 대해 hasTask 값 확인
       dates.push({ date: i, type: "current", hasTask });
     }
     const remainingDays = (7 - (dates.length % 7)) % 7;
@@ -179,6 +202,7 @@ const Container = styled.div`
   height: calc(100vh - 132px);
   overflow-y: auto;
   padding-bottom: 74px;
+  min-width: 400px;
 `;
 
 const MyTodoContainer = styled.div`
@@ -191,7 +215,6 @@ const MyTodoContainer = styled.div`
   align-self: stretch;
   background: #fff;
   margin-top: 20px;
-  height: 30%;
 `;
 
 const HeaderContainer = styled.div`
@@ -245,12 +268,12 @@ const DateBox = styled.div`
   padding: 5px 0px 5px 0px;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* 숫자가 세로로 중앙 정렬 */
+  justify-content: center;
   align-items: center;
   cursor: pointer;
   color: ${({ type }) =>
     type === "prev" || type === "next" ? "#ccc" : "inherit"};
-  position: relative; /* TaskIndicator 위치를 조정하기 위해 추가 */
+  position: relative;
 
   &:hover {
     background: ${({ type }) =>
@@ -276,8 +299,6 @@ const TaskIndicator = () => <div className="task-indicator" />;
 const Name = styled.div`
   color: #000;
   font-size: 24px;
-  font-style: normal;
   font-weight: 600;
-  line-height: normal;
   letter-spacing: -0.5px;
 `;

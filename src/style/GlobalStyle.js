@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
     font-family: 'Pretendard';
     background-color: #fafafa;
+    min-width: 390px;
   }
 `;
 
