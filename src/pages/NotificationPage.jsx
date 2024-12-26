@@ -26,7 +26,7 @@ const NotificationPage = () => {
       <GlobalStyle />
       <BackHeader title="알림" pageurl={"/homemain"} />
       <Container>
-        {/* New Notifications */}
+        {/* 새로운 알림( 오늘 알림 ) */}
         {newNotifications.length > 0 && (
           <Section>
             <SectionTitle>새로운 알림</SectionTitle>
@@ -42,7 +42,7 @@ const NotificationPage = () => {
           </Section>
         )}
 
-        {/* Past Notifications */}
+        {/*  지난 알림( 오늘 기준 3일 이내 날짜 알림 ) */}
         {pastNotifications.length > 0 && (
           <Section>
             <SectionTitle>지난 알림</SectionTitle>
