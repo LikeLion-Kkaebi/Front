@@ -1,0 +1,53 @@
+{
+  "notifications": [
+    {
+      "alert_id": 1,
+      "message": "청소님이 할 일을 모두 완료했어요.",
+      "time": "15분 전",
+      "absolute_time": "2024-12-26T12:45:00Z",
+      "is_new": true
+    },
+    {
+      "alert_id": 2,
+      "message": "빨래님이 할 일을 모두 완료했어요.",
+      "time": "2시간 전",
+      "absolute_time": "2024-12-26T12:45:00Z",
+      "is_new": true
+    },
+    {
+      "alert_id": 3,
+      "message": "청소님이 할 일을 모두 완료했어요.",
+      "time": "30시간 전",
+      "absolute_time": "2024-12-25T12:45:00Z",
+      "is_new": false
+    },
+    {
+      "alert_id": 4,
+      "message": "사자님이 할 일을 모두 완료했어요.",
+      "time": "38시간 전",
+      "absolute_time": "2024-12-25T12:45:00Z",
+      "is_new": false
+    },
+    {
+      "alert_id": 5,
+      "message": "어흥님이 할 일을 모두 완료했어요.",
+      "time": "40시간 전",
+      "absolute_time": "2024-12-25T12:45:00Z",
+      "is_new": false
+    },
+    {
+      "alert_id": 6,
+      "message": "멋사님이 할 일을 모두 완료했어요.",
+      "time": "38시간 전",
+      "absolute_time": "2024-12-25T12:45:00Z",
+      "is_new": false
+    },
+    {
+      "alert_id": 7,
+      "message": "청소님이 할 일을 모두 완료했어요.",
+      "time": "38시간 전",
+      "absolute_time": "2024-12-25T12:45:00Z",
+      "is_new": false
+    }
+  ]
+}

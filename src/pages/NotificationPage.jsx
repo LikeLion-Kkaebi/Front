@@ -1,49 +1,129 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 import GlobalStyle from "../style/GlobalStyle";
-import SignupBackBtn from "../images/SignupBackBtn.svg";
 import BackHeader from "../components/BackHeader";
+import NotificationIcon from "../images/NotificationIcon.svg"; // Add the appropriate icon path
 
 const NotificationPage = () => {
   const navigate = useNavigate();
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    // Fetch mock data from public/notification.json
+    fetch("/notification.json")
+      .then((response) => response.json())
+      .then((data) => setNotifications(data.notifications))
+      .catch((error) => console.error("Error fetching notifications:", error));
+  }, []);
+
+  const newNotifications = notifications.filter((notif) => notif.is_new);
+  const pastNotifications = notifications.filter((notif) => !notif.is_new);
 
   return (
     <>
       <GlobalStyle />
       <BackHeader title="알림" pageurl={"/homemain"} />
-      <Container></Container>
+      <Container>
+        {/* New Notifications */}
+        {newNotifications.length > 0 && (
+          <Section>
+            <SectionTitle>새로운 알림</SectionTitle>
+            {newNotifications.map((notif) => (
+              <NotificationItem key={notif.alert_id}>
+                <Icon src={NotificationIcon} alt="Notification Icon" />
+                <Content>
+                  <Message>{notif.message}</Message>
+                  <Time>{notif.time}</Time>
+                </Content>
+              </NotificationItem>
+            ))}
+          </Section>
+        )}
+
+        {/* Past Notifications */}
+        {pastNotifications.length > 0 && (
+          <Section>
+            <SectionTitle>지난 알림</SectionTitle>
+            {pastNotifications.map((notif) => (
+              <NotificationItem key={notif.alert_id}>
+                <Icon src={NotificationIcon} alt="Notification Icon" />
+                <Content>
+                  <Message>{notif.message}</Message>
+                  <Time>
+                    {new Date(notif.absolute_time).toLocaleDateString()}
+                  </Time>
+                </Content>
+              </NotificationItem>
+            ))}
+          </Section>
+        )}
+      </Container>
     </>
   );
 };
 
 export default NotificationPage;
 
-const Header = styled.div`
-  display: flex;
-  padding: 20px;
-  align-items: center;
-  align-self: stretch;
-  background-color: #fafafa;
-`;
-
-const BackBtn = styled.button`
-  width: 9px;
-  height: 18px;
-  border: none;
-  background: url(${SignupBackBtn}) no-repeat center;
-  background-size: contain;
-  cursor: pointer;
-`;
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 0 20px;
+  padding: 20px;
   background-color: #fafafa;
-  height: calc(100vh - 132px); /* Header 패딩과 NextBtn 마진 포함 */
-  overflow: hidden; /* 스크롤 숨기기 */
-  padding-bottom: 74px;
+`;
+
+const Section = styled.div`
+  margin-bottom: 4px;
+`;
+
+const SectionTitle = styled.div`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: -0.5px;
+  align-self: stretch;
+  margin-bottom: 16px;
+`;
+
+const NotificationItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const Icon = styled.img`
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Message = styled.div`
+  color: #000;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+`;
+
+const Time = styled.div`
+  align-self: stretch;
+  color: #aa91e8;
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.5px;
 `;
