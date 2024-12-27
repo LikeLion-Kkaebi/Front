@@ -63,6 +63,7 @@ const CalendarPage = () => {
           (task) => task.houseworkDate === todayString
         );
         setTodayTodos(todayTasks);
+        console.log("오늘의 할 일:", todayTodos);
       }
     };
 
@@ -121,7 +122,11 @@ const CalendarPage = () => {
           new Date(task.houseworkDate).getDate() === i &&
           new Date(task.houseworkDate).getMonth() === month
       );
-      dates.push({ date: i, type: "current", hasTask });
+      const isToday =
+        i === today.getDate() &&
+        month === today.getMonth() &&
+        year === today.getFullYear();
+      dates.push({ date: i, type: "current", hasTask, isToday });
     }
     const remainingDays = (7 - (dates.length % 7)) % 7;
     for (let i = 1; i <= remainingDays; i++) {
@@ -141,6 +146,7 @@ const CalendarPage = () => {
               <DateBox
                 key={colIndex}
                 type={dateObj.type}
+                isToday={dateObj.isToday}
                 onClick={() =>
                   dateObj.type === "current" && handleDateClick(dateObj.date)
                 }
@@ -274,13 +280,12 @@ const DateBox = styled.div`
   color: ${({ type }) =>
     type === "prev" || type === "next" ? "#ccc" : "inherit"};
   position: relative;
-
-  &:hover {
-    background: ${({ type }) =>
-      type === "current" ? "var(--key_purple, #aa91e8)" : "none"};
-    border-radius: ${({ type }) => (type === "current" ? "100%" : "none")};
-    color: ${({ type }) => (type === "current" ? "white" : "inherit")};
-  }
+  background: ${({ type, isToday }) =>
+    type === "current" && isToday ? "var(--key_purple, #aa91e8)" : "none"};
+  border-radius: ${({ type, isToday }) =>
+    type === "current" && isToday ? "100%" : "none"};
+  color: ${({ type, isToday }) =>
+    type === "current" && isToday ? "white" : "inherit"};
 
   & > .task-indicator {
     /* TaskIndicator를 직접 다루기 위한 클래스 */

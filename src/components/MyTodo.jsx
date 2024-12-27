@@ -7,7 +7,7 @@ import CheckPurple from "../images/CheckPurple.svg";
 import useHouseworkTagStore from "../stores/HouseworkTagStore";
 
 const MyTodo = ({
-  houseworkID,
+  houseworkId,
   categoryName,
   houseworkPlace,
   houseworkDetail,
@@ -36,7 +36,7 @@ const MyTodo = ({
       const response = await instance.put(
         `${process.env.REACT_APP_SERVER_PORT}calendar/houseworkDone/`,
         {
-          houseworkId: houseworkID, // houseworkID를 요청 본문에 포함
+          houseworkId: houseworkId, // houseworkID를 요청 본문에 포함
         },
         {
           headers: {
@@ -54,6 +54,7 @@ const MyTodo = ({
         console.error("API 요청 실패:", response.status);
       }
     } catch (error) {
+      console.log(houseworkId);
       console.error("에러 발생:", error);
     }
   };
@@ -64,8 +65,13 @@ const MyTodo = ({
       <Container removeStyles={removeStyles}>
         <Front>
           <Category>{tagValue}</Category>
-          <TodoCategory>{houseworkPlace}</TodoCategory>
-          <TodoCategory>{houseworkDetail}</TodoCategory>
+          {/* houseworkPlace와 houseworkDetail 값이 "미정"이 아닌 경우만 렌더링 */}
+          {houseworkPlace !== "미정" && (
+            <TodoCategory>{houseworkPlace}</TodoCategory>
+          )}
+          {houseworkDetail !== "미정" && (
+            <TodoCategory>{houseworkDetail}</TodoCategory>
+          )}
         </Front>
 
         {/* 이미지 클릭 시 상태 변화에 따라 src 변경 */}
