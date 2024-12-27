@@ -52,7 +52,10 @@ const WhoTodoPage = () => {
   return (
     <>
       <GlobalStyle />
-      <BackHeader title={<br />} pageurl={"/whattodo"} />
+      <BackHeader
+        title={<br />}
+        pageurl={`/whattodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`}
+      />
       <Container>
         <Top>
           <Kkaebi>

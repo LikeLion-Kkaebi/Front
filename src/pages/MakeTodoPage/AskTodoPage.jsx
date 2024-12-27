@@ -141,7 +141,10 @@ const AskTodoPage = () => {
   return (
     <>
       <GlobalStyle />
-      <BackHeader title={<br />} pageurl={"/whotodo"} />
+      <BackHeader
+        title={<br />}
+        pageurl={`/whotodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`}
+      />
       <Container>
         <Top>
           <Kkaebi>
