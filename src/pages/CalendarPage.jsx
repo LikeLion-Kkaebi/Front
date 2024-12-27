@@ -47,8 +47,9 @@ const CalendarPage = () => {
       const token = localStorage.getItem("token");
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
+      const day = currentDate.getDate();
       const response = await instance.get(
-        `${process.env.REACT_APP_SERVER_PORT}calendar/${year}/${month}/`,
+        `${process.env.REACT_APP_SERVER_PORT}calendar/housework/my/${year}/${month}/${day}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -120,7 +121,6 @@ const CalendarPage = () => {
           new Date(task.houseworkDate).getDate() === i &&
           new Date(task.houseworkDate).getMonth() === month
       );
-      console.log(i, hasTask); // 각 날짜에 대해 hasTask 값 확인
       dates.push({ date: i, type: "current", hasTask });
     }
     const remainingDays = (7 - (dates.length % 7)) % 7;
