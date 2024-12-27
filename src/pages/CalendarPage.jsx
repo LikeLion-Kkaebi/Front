@@ -63,7 +63,7 @@ const CalendarPage = () => {
           (task) => task.houseworkDate === todayString
         );
         setTodayTodos(todayTasks);
-        console.log("오늘의 할 일:", todayTodos);
+        console.log("오늘의 할 일:", todayTasks);
       }
     };
 

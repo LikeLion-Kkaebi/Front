@@ -16,6 +16,7 @@ const characterImages = {
 
 export const useFamilyStore = create((set) => ({
   profiles: [],
+  familyProfiles: [],
   error: null,
   fetchProfiles: async () => {
     try {
@@ -52,6 +53,7 @@ export const useFamilyStore = create((set) => ({
         nickname: member.nickname,
         characterImage: member.userCharacter,
       }));
+      set({ familyProfiles: familyData });
 
       // 3. 중복 제거 로직
       const allProfiles = [userData, ...familyData];

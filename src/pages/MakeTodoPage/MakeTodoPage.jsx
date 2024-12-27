@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import GlobalStyle from "../../style/GlobalStyle";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
@@ -10,10 +10,16 @@ import useHouseworkTagStore from "../../stores/HouseworkTagStore"; // Store 경�
 
 const MakeTodoPage = () => {
   const houseworkTag = useHouseworkTagStore((state) => state.houseworkTag);
+  const [searchParams] = useSearchParams();
+
   const setSelectedTag = useHouseworkTagStore((state) => state.setSelectedTag);
   const categories = Object.values(houseworkTag);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
+  // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
+  const queryYear = searchParams.get("year");
+  const queryMonth = searchParams.get("month");
+  const queryDay = searchParams.get("date");
 
   const toggleCategory = (category) => {
     const tag = Object.keys(houseworkTag).find(
@@ -32,7 +38,9 @@ const MakeTodoPage = () => {
 
   const handleNextClick = () => {
     if (selectedCategory) {
-      navigate("/wheretodo");
+      navigate(
+        `/wheretodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`
+      );
     }
   };
 

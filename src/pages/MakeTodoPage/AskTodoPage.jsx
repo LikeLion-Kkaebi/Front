@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import GlobalStyle from "../../style/GlobalStyle";
 import SignupBackBtn from "../../images/SignupBackBtn.svg";
@@ -17,6 +17,8 @@ import BackHeader from "../../components/BackHeader";
 import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 import instance from "axios";
 
+// URL에서 쿼리스트링으로 전달된 데이터를 가져옴
+
 const emptyImages = {
   1: empty1Img,
   2: empty2Img,
@@ -27,6 +29,8 @@ const emptyImages = {
 
 const AskTodoPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const houseworkPlace = useHouseworkTagStore((state) => state.houseworkPlace);
   const houseworkDetail = useHouseworkTagStore(
     (state) => state.houseworkDetail
@@ -40,6 +44,10 @@ const AskTodoPage = () => {
   const [selectedCharacter, setSelectedCharacter] = useState(0);
   const { nickname, userid, characterImage } = selectedUser;
   const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
+
+  const queryYear = searchParams.get("year");
+  const queryMonth = searchParams.get("month");
+  const queryDay = searchParams.get("date");
 
   console.log("selectedUser 값:", selectedUser);
   console.log("characterImage 값:", characterImage);
@@ -62,12 +70,15 @@ const AskTodoPage = () => {
     );
   }
 
+  const houseworkDate = `${queryYear}-${queryMonth}-${queryDay}`;
+  console.log("날짜:", houseworkDate);
   // Zustand 상태 가져오기 (최적화)
 
   const handleConfirmClick = async () => {
     const payload = {
       houseworkPlace: houseworkPlace || "미정",
       houseworkDetail: houseworkDetail || "미정",
+      houseworkDate: houseworkDate,
       tag: selectedTag,
     };
 
