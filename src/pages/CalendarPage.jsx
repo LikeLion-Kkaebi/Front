@@ -13,7 +13,7 @@ import MyTodo from "../components/MyTodo";
 const CalendarPage = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [monthData, setMonthData] = useState([]);
-  const [todayTodos, setTodayTodos] = useState([]);
+  const [todayTasks, setTodayTasks] = useState([]);
   const navigate = useNavigate();
   const today = new Date();
 
@@ -43,7 +43,7 @@ const CalendarPage = () => {
 
   // 오늘의 할 일 가져오기
   useEffect(() => {
-    const fetchTodayTodos = async () => {
+    const fetchTodayTasks = async () => {
       const token = localStorage.getItem("token");
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth() + 1;
@@ -58,16 +58,13 @@ const CalendarPage = () => {
       );
 
       if (response.status === 200) {
-        const todayString = today.toISOString().split("T")[0];
-        const todayTasks = response.data.data.filter(
-          (task) => task.houseworkDate === todayString
-        );
-        setTodayTodos(todayTasks);
+        const todayTasks = response.data.data;
+        setTodayTasks(todayTasks);
         console.log("오늘의 할 일:", todayTasks);
       }
     };
 
-    fetchTodayTodos();
+    fetchTodayTasks();
   }, []); // 오늘의 할 일은 컴포넌트가 처음 마운트될 때만 호출
 
   const handlePrevMonth = () => {
@@ -181,7 +178,7 @@ const CalendarPage = () => {
         {renderDates()}
         <MyTodoContainer>
           <Name>{`${today.getMonth() + 1}월 ${today.getDate()}일`}</Name>
-          {todayTodos.map((todo, index) => (
+          {todayTasks.map((todo, index) => (
             <MyTodo
               key={index}
               categoryName={todo.tag.tagid}
