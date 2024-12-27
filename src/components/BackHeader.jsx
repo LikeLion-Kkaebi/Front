@@ -36,7 +36,7 @@ const Container = styled.div`
   background-color: #fafafa;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 50;
   display: flex;
   align-items: center;
   padding: 20px;
