@@ -7,6 +7,8 @@ import FamilySelector from "../../components/FamilySelector";
 import { useFamilyStore } from "../../stores/FamilyStore";
 import BackHeader from "../../components/BackHeader";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
+import useHouseworkTagStore from "../../stores/HouseworkTagStore";
+import instance from "axios";
 
 const WhoTodoPage = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -20,9 +22,13 @@ const WhoTodoPage = () => {
   const queryMonth = searchParams.get("month");
   const queryDay = searchParams.get("date");
 
+  const selectedTag = useHouseworkTagStore((state) => state.selectedTag);
+
+  const [comment, setComment] = useState("");
+
   useEffect(() => {
     fetchProfiles();
-  }, [fetchProfiles]);
+  }, [selectedTag, fetchProfiles]);
 
   const toggleCategory = (nickname) => {
     if (selectedCategories.includes(nickname)) {
@@ -49,6 +55,45 @@ const WhoTodoPage = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchRecommendation = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await instance.get(
+          `${process.env.REACT_APP_SERVER_PORT}housework/recommend-member?houseworkId=${selectedTag}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200 && response.data.response) {
+          const responseUserNumber = parseInt(response.data.response, 10); // int로 변환
+          const recommendUser = profiles.find(
+            (profile) => parseInt(profile.userid, 10) === responseUserNumber
+          );
+
+          if (recommendUser) {
+            setComment(
+              <>
+                {recommendUser.nickname}{" "}
+                <span style={{ color: "#AA91E8" }}>님은 어떨까요?</span>
+              </>
+            );
+          } else {
+            setComment("추천 사용자를 찾을 수 없습니다.");
+          }
+        }
+      } catch (error) {
+        setComment(""); // 에러 처리 시 comment 초기화
+        alert(error.response ? error.response.data.error : "서버 에러 발생");
+      }
+    };
+
+    fetchRecommendation();
+  }, [selectedTag, profiles]);
+
   return (
     <>
       <GlobalStyle />
@@ -60,7 +105,10 @@ const WhoTodoPage = () => {
         <Top>
           <Kkaebi>
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
-            <Comment>담당할 식구를 선택해주세요.</Comment>
+            <Comment>
+              <p>담당할 식구를 선택해주세요.</p>
+              {comment && <p style={{ fontSize: "16px" }}>{comment}</p>}
+            </Comment>
           </Kkaebi>
           <FamilySelector
             selectedCategories={selectedCategories}
