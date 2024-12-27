@@ -172,7 +172,14 @@ const DayPage = () => {
           renderEmptyState()
         )}
         <Bottom>
-          <Floating src={add} onClick={() => navigate("/maketodo")}></Floating>
+          <Floating
+            src={add}
+            onClick={() =>
+              navigate(
+                `/maketodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`
+              )
+            }
+          ></Floating>
         </Bottom>
       </Container>
     </>

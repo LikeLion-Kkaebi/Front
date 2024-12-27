@@ -24,48 +24,60 @@ const characterImages = {
 const FamilyPage = () => {
   const navigate = useNavigate();
   const housecode = localStorage.getItem("housecode");
-  const familyProfiles = useFamilyStore((state) => state.profiles);
-  const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
-  const currentUserId = localStorage.getItem("user_id"); // 현재 사용자의 userid
+  const [familyProfiles, setFamilyProfiles] = useState([]);
+  const currentUserId = localStorage.getItem("user_id");
 
   useEffect(() => {
-    fetchProfiles();
-  }, [fetchProfiles]);
+    const fetchFamilyProfiles = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await instance.get(
+          `${process.env.REACT_APP_SERVER_PORT}mypage/member/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const familyData = response.data.housemembers
+          .filter((member) => member.userid != currentUserId) // 현재 사용자 제외
+          .map((member) => ({
+            userid: member.userid,
+            nickname: member.nickname,
+            characterImage: member.userCharacter,
+          }));
 
+        setFamilyProfiles(familyData);
+        console.log("가족 프로필", familyData);
+      } catch (error) {
+        console.error("Error fetching family profiles:", error);
+      }
+    };
+
+    fetchFamilyProfiles();
+  }, []);
+
+  // 멤버 삭제 핸들러
   const handleDelete = async (userid) => {
-    // 본인 삭제 방지
-    if (userid === currentUserId) {
-      alert("본인은 삭제할 수 없습니다!");
-      return;
-    }
-
     try {
       const response = await instance.delete(
         `${process.env.REACT_APP_SERVER_PORT}mypage/remove-member/`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Authorization 토큰을 헤더에 추가
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          data: {
-            userid, // 삭제하려는 식구의 userid
-          },
+          data: { userid },
         }
       );
       if (response.status === 200) {
-        alert(response.data.message); // 성공 시 메세지 표시
-        fetchProfiles(); // 삭제 후 프로필 갱신
+        alert(response.data.message);
+        setFamilyProfiles((prevProfiles) =>
+          prevProfiles.filter((profile) => profile.userid !== userid)
+        );
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        const errorMessage = error.response.data.userid[0];
-        if (errorMessage.includes("이 필드는 필수 항목입니다")) {
-          alert("본인은 삭제할 수 없습니다!");
-        } else {
-          alert("삭제 요청에 실패했습니다.");
-        }
-      } else {
-        console.error("Failed to delete member:", error);
-      }
+      alert("삭제 요청에 실패했습니다.");
+      console.error("Failed to delete member:", error);
     }
   };
 

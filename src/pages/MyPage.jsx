@@ -301,6 +301,7 @@ const ProfileImage = styled.img`
 
 const CharacterIcon = styled.img`
   width: 98px;
+  margin-bottom: -5px;
 `;
 
 const TopContainer = styled.div`

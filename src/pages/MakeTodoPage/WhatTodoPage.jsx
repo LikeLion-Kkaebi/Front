@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import GlobalStyle from "../../style/GlobalStyle";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
 import BackHeader from "../../components/BackHeader";
@@ -8,10 +8,16 @@ import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 
 const WhereTodoPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   const [name, setName] = useState(""); // 입력값 상태 관리
   const setHouseworkDetail = useHouseworkTagStore(
     (state) => state.setHouseworkDetail
   ); // Zustand 상태 업데이트 함수 가져오기
+  // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
+  const queryYear = searchParams.get("year");
+  const queryMonth = searchParams.get("month");
+  const queryDay = searchParams.get("date");
 
   // 입력값 변경 핸들러
   const handleInputChange = (e) => {
@@ -22,7 +28,7 @@ const WhereTodoPage = () => {
   // 다음 버튼 클릭 핸들러
   const handleNextClick = () => {
     setHouseworkDetail(name); // Zustand 스토어에 입력값 저장 (비어 있어도 문제 없음)
-    navigate("/whotodo"); // 다음 페이지로 이동
+    navigate(`/whotodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`); // 다음 페이지로 이동
   };
 
   return (
