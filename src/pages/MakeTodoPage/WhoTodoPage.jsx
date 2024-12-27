@@ -58,6 +58,8 @@ const WhoTodoPage = () => {
   useEffect(() => {
     const fetchRecommendation = async () => {
       try {
+        console.log("선택된 태그:", selectedTag);
+
         const token = localStorage.getItem("token");
         const response = await instance.get(
           `${process.env.REACT_APP_SERVER_PORT}housework/recommend-member?houseworkId=${selectedTag}`,
@@ -82,12 +84,21 @@ const WhoTodoPage = () => {
               </>
             );
           } else {
-            setComment("추천 사용자를 찾을 수 없습니다.");
+            setComment("");
           }
         }
       } catch (error) {
-        setComment(""); // 에러 처리 시 comment 초기화
-        alert(error.response ? error.response.data.error : "서버 에러 발생");
+        if (error.response && error.response.status === 403) {
+          console.log(
+            "AI 추천 기능은 프리미엄 요금제를 결제해야 사용할 수 있습니다."
+          );
+          setComment("");
+        } else if (error.response) {
+          console.log("오류 발생: ", error.response);
+        } else {
+          alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+        setComment(""); // 에러 발생 시 comment 초기화
       }
     };
 

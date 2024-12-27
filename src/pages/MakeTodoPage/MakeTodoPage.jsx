@@ -34,28 +34,41 @@ const MakeTodoPage = () => {
           `${process.env.REACT_APP_SERVER_PORT}housework/recommend-tag?date=${queryDate}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // 토큰을 여기에 설정
+              Authorization: `Bearer ${token}`, // 토큰 설정
             },
           }
         );
 
         if (response.status === 200 && response.data.response) {
-          const responseTagNumber = response.data.response;
+          console.log(response.data.response);
+          const recommendTag = response.data.response;
           setComment(
             <>
-              {houseworkTag[responseTagNumber]}{" "}
-              <span style={{ color: "#AA91E8" }}>는 어떨까요?</span>
+              <span style={{ color: "#AA91E8" }}>{recommendTag}</span>
             </>
           );
+        } else {
+          setComment(""); // 기타 에러 처리
         }
       } catch (error) {
-        setComment(""); // 기타 에러 처리
-        alert(error.response);
+        // 에러 핸들링
+        if (error.response && error.response.status === 403) {
+          console.log(
+            "AI 추천 기능은 프리미엄 요금제를 결제해야 사용할 수 있습니다."
+          );
+          setComment("");
+        } else if (error.response) {
+          console.log("오류 발생: ", error.response);
+          setComment("");
+        } else {
+          alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+        setComment(""); // 에러 발생 시 comment 초기화
       }
     };
 
     fetchRecommendation();
-  }, [queryDate]);
+  }, [queryDate, houseworkTag]);
 
   const toggleCategory = (category) => {
     const tag = Object.keys(houseworkTag).find(
@@ -90,7 +103,9 @@ const MakeTodoPage = () => {
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
             <Comment>
               <p>집안일 카테고리를 선택해주세요.</p>
-              {comment && <p style={{ fontSize: "16px" }}>{comment}</p>}
+              {comment && (
+                <p style={{ fontSize: "16px" }}>{comment}는 어떨까요?</p>
+              )}
             </Comment>
           </Kkaebi>
           <CategorySelector
@@ -130,7 +145,7 @@ const Top = styled.div`
 const Kkaebi = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: top;
   color: #000;
   font-family: Pretendard, sans-serif;
   font-size: 20px;
