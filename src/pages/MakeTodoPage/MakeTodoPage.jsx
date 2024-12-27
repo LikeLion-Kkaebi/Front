@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import instance from "axios";
 
 import GlobalStyle from "../../style/GlobalStyle";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
@@ -11,7 +12,8 @@ import useHouseworkTagStore from "../../stores/HouseworkTagStore"; // Store 경�
 const MakeTodoPage = () => {
   const houseworkTag = useHouseworkTagStore((state) => state.houseworkTag);
   const [searchParams] = useSearchParams();
-
+  const [tagNumber, setTagNumber] = useState(null); // API에서 받은 태그 번호 저장
+  const [tagValue, setTagValue] = useState("");
   const setSelectedTag = useHouseworkTagStore((state) => state.setSelectedTag);
   const categories = Object.values(houseworkTag);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -20,6 +22,40 @@ const MakeTodoPage = () => {
   const queryYear = searchParams.get("year");
   const queryMonth = searchParams.get("month");
   const queryDay = searchParams.get("date");
+  const queryDate = `${queryYear}-${queryMonth}-${queryDay}`;
+
+  const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    const fetchRecommendation = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await instance.get(
+          `${process.env.REACT_APP_SERVER_PORT}housework/recommend-tag?date=${queryDate}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // 토큰을 여기에 설정
+            },
+          }
+        );
+
+        if (response.status === 200 && response.data.response) {
+          const responseTagNumber = response.data.response;
+          setComment(
+            <>
+              {houseworkTag[responseTagNumber]}{" "}
+              <span style={{ color: "#AA91E8" }}>는 어떨까요?</span>
+            </>
+          );
+        }
+      } catch (error) {
+        setComment(""); // 기타 에러 처리
+        alert(error.response);
+      }
+    };
+
+    fetchRecommendation();
+  }, [queryDate]);
 
   const toggleCategory = (category) => {
     const tag = Object.keys(houseworkTag).find(
@@ -52,7 +88,10 @@ const MakeTodoPage = () => {
         <Top>
           <Kkaebi>
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
-            <Comment>집안일 카테고리를 선택해주세요.</Comment>
+            <Comment>
+              <p>집안일 카테고리를 선택해주세요.</p>
+              {comment && <p style={{ fontSize: "16px" }}>{comment}</p>}
+            </Comment>
           </Kkaebi>
           <CategorySelector
             categories={categories}

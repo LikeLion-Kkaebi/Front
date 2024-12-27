@@ -34,7 +34,10 @@ const WhereTodoPage = () => {
   return (
     <>
       <GlobalStyle />
-      <BackHeader title={<br />} pageurl={"/maketodo"} />
+      <BackHeader
+        title={<br />}
+        pageurl={`/maketodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`}
+      />
       <Container>
         <Top>
           <Kkaebi>

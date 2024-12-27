@@ -6,44 +6,45 @@ import GlobalStyle from "../style/GlobalStyle";
 import BackHeader from "../components/BackHeader";
 import useDateStore from "../stores/DateStore"; // DateStore 가져오기
 import KkaebiProfileImg from "../images/KkaebiProfile.svg";
+import Modal from "../components/PremiumModal";
+import instance from "axios";
 
 import Copy from "../images/Copy.svg";
 
 const UpgradePage = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState("myTasks");
-  const [adjustedMargin, setAdjustedMargin] = useState(85);
-
-  // Zustand에서 상태와 상태 변경 함수 가져오기
-  const { setYear, setMonth, setDay, month, day } = useDateStore();
-
-  // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
-  const queryYear = searchParams.get("year");
-  const queryMonth = searchParams.get("month");
-  const queryDay = searchParams.get("date");
-
-  useEffect(() => {
-    const totalHeight = document.body.scrollHeight; // 콘텐츠의 총 높이
-    const windowHeight = window.innerHeight; // 기기의 화면 높이
-    if (totalHeight > windowHeight) {
-      const marginAdjustment = totalHeight - windowHeight;
-      setAdjustedMargin(85 - marginAdjustment); // 화면이 짧으면 margin을 조정
-    }
-  }, []);
 
   // 상태 업데이트
-  useEffect(() => {
-    if (queryYear && queryMonth && queryDay) {
-      setYear(Number(queryYear));
-      setMonth(Number(queryMonth));
-      setDay(Number(queryDay)); // queryDay를 setDay에 제대로 전달
+
+  const [modal, setModal] = useState(false);
+  // 모달창의 state를 바꾸는 함수 작성 (true <-> false)
+  const openModal = () => {
+    setModal(true);
+  };
+
+  const goPremium = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await instance.patch(
+        `${process.env.REACT_APP_SERVER_PORT}mypage/plan-upgrade/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response);
+      alert(response.data.message);
+    } catch (error) {
+      console.error(error);
+      alert(error);
     }
-  }, [queryYear, queryMonth, queryDay, setYear, setMonth, setDay]);
+  };
 
   return (
     <>
       <GlobalStyle />
+      {modal ? <Modal setModal={setModal} goPremium={goPremium} /> : null}
       <BackHeader title={`플랜 업그레이드`} pageurl={"/mypage"} />
       <Container>
         <Top>
@@ -67,7 +68,7 @@ const UpgradePage = () => {
           </Kkaebi>
         </Top>
         <Bottom>
-          <NextBtn>플랜 업그레이드 하기</NextBtn>
+          <NextBtn onClick={openModal}>플랜 업그레이드 하기</NextBtn>
         </Bottom>
       </Container>
     </>
