@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import GlobalStyle from "../style/GlobalStyle";
 import BackHeader from "../components/BackHeader";
-import NotificationIcon from "../images/NotificationIcon.svg"; // Add the appropriate icon path
+import NotificationIcon from "../images/NotificationIcon.svg";
+import NoNotification from "../images/NoNotification.svg";
 
 const NotificationPage = () => {
   const navigate = useNavigate();
@@ -47,6 +48,12 @@ const NotificationPage = () => {
       <GlobalStyle />
       <BackHeader title="알림" pageurl={"/homemain"} />
       <Container>
+        {/* 알림이 없을 때 */}
+        {notifications.length === 0 && (
+          <NoNotificationContainer>
+            <NoNotificationImage src={NoNotification} alt="No Notifications" />
+          </NoNotificationContainer>
+        )}
         {/* 새로운 알림( 오늘 알림 ) */}
         {newNotifications.length > 0 && (
           <Section>
@@ -147,4 +154,17 @@ const Time = styled.div`
   font-weight: 500;
   line-height: normal;
   letter-spacing: -0.5px;
+`;
+
+const NoNotificationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 109px);
+`;
+
+const NoNotificationImage = styled.img`
+  width: 337px;
+  height: 260px;
 `;

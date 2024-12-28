@@ -347,7 +347,7 @@ const Tag = styled.div`
 `;
 
 const NoTaskMessage = styled.div`
-  color: #000;
+  color: #787878;
   font-family: Pretendard;
   font-size: 16px;
   font-weight: 400;
@@ -409,7 +409,7 @@ const Bottom = styled.div`
 `;
 
 const NoFamilyMessage = styled.div`
-  color: #000;
+  color: #787878;
   font-family: Pretendard;
   font-size: 16px;
   font-style: normal;
