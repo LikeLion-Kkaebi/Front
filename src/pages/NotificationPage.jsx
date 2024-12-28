@@ -11,11 +11,32 @@ const NotificationPage = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    // Fetch mock data from public/notification.json
-    fetch("/notification.json")
-      .then((response) => response.json())
-      .then((data) => setNotifications(data.notifications))
-      .catch((error) => console.error("Error fetching notifications:", error));
+    const token = localStorage.getItem("token");
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_PORT}notification/list/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data.notifications);
+          setNotifications(data.notifications);
+        } else {
+          console.error("Failed to fetch notifications", response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    fetchNotifications();
   }, []);
 
   const newNotifications = notifications.filter((notif) => notif.is_new);
