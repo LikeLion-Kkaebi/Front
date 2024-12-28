@@ -11,8 +11,8 @@ import instance from "axios";
 const WhatTodoPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [houseworkId, setHouseworkId] = useState(null);
-
+  const houseworkId = useHouseworkTagStore((state) => state.houseworkId);
+  const setHouseworkId = useHouseworkTagStore((state) => state.setHouseworkId);
   const [name, setName] = useState(""); // 입력값 상태 관리
 
   const setHouseworkDetail = useHouseworkTagStore(
@@ -36,7 +36,7 @@ const WhatTodoPage = () => {
     setName(inputValue); // 입력값 상태 업데이트
   };
   const houseworkDate = `${queryYear}-${queryMonth}-${queryDay}`;
-  console.log("날짜:", houseworkDate);
+
   // Zustand 상태 가져오기 (최적화)
   // 다음 버튼 클릭 핸들러
   const handleNextClick = () => {
@@ -67,10 +67,11 @@ const WhatTodoPage = () => {
           },
         }
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log("POST 성공", response.data);
         const newHouseworkId = response.data.data.houseworkId;
-        setHouseworkId(newHouseworkId); // 상태에 저장
+        setHouseworkId(newHouseworkId); // Zustand에 houseworkId 저장
+        console.log("houseworkId:", newHouseworkId);
         navigate(
           `/whotodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`
         );

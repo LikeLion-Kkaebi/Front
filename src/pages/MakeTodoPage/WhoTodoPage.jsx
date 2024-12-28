@@ -22,13 +22,13 @@ const WhoTodoPage = () => {
   const queryMonth = searchParams.get("month");
   const queryDay = searchParams.get("date");
 
-  const selectedTag = useHouseworkTagStore((state) => state.selectedTag);
+  const houseworkId = useHouseworkTagStore((state) => state.houseworkId);
 
   const [comment, setComment] = useState("");
 
   useEffect(() => {
     fetchProfiles();
-  }, [selectedTag, fetchProfiles]);
+  }, [houseworkId, fetchProfiles]);
 
   const toggleCategory = (nickname) => {
     if (selectedCategories.includes(nickname)) {
@@ -58,11 +58,9 @@ const WhoTodoPage = () => {
   useEffect(() => {
     const fetchRecommendation = async () => {
       try {
-        console.log("선택된 태그:", selectedTag);
-
         const token = localStorage.getItem("token");
         const response = await instance.get(
-          `${process.env.REACT_APP_SERVER_PORT}housework/recommend-member?houseworkId=${selectedTag}`,
+          `${process.env.REACT_APP_SERVER_PORT}housework/recommend-member?houseworkId=${houseworkId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -79,8 +77,10 @@ const WhoTodoPage = () => {
           if (recommendUser) {
             setComment(
               <>
-                {recommendUser.nickname}{" "}
-                <span style={{ color: "#AA91E8" }}>님은 어떨까요?</span>
+                <span style={{ color: "#AA91E8" }}>
+                  {recommendUser.nickname}
+                </span>
+                <span> 님은 어떨까요?</span>
               </>
             );
           } else {
@@ -103,7 +103,7 @@ const WhoTodoPage = () => {
     };
 
     fetchRecommendation();
-  }, [selectedTag, profiles]);
+  }, [houseworkId, profiles]);
 
   return (
     <>
@@ -111,6 +111,7 @@ const WhoTodoPage = () => {
       <BackHeader
         title={<br />}
         pageurl={`/whattodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`}
+        houseworkId={houseworkId}
       />
       <Container>
         <Top>
@@ -118,7 +119,11 @@ const WhoTodoPage = () => {
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
             <Comment>
               <p>담당할 식구를 선택해주세요.</p>
-              {comment && <p style={{ fontSize: "16px" }}>{comment}</p>}
+              {comment && (
+                <p style={{ fontSize: "16px", marginBottom: "-20px" }}>
+                  {comment}
+                </p>
+              )}
             </Comment>
           </Kkaebi>
           <FamilySelector
