@@ -6,14 +6,25 @@ import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
 import BackHeader from "../../components/BackHeader";
 import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 
-const WhereTodoPage = () => {
+import instance from "axios";
+
+const WhatTodoPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [houseworkId, setHouseworkId] = useState(null);
 
   const [name, setName] = useState(""); // 입력값 상태 관리
+
   const setHouseworkDetail = useHouseworkTagStore(
     (state) => state.setHouseworkDetail
   ); // Zustand 상태 업데이트 함수 가져오기
+
+  const houseworkPlace = useHouseworkTagStore((state) => state.houseworkPlace);
+  const houseworkDetail = useHouseworkTagStore(
+    (state) => state.houseworkDetail
+  );
+  const selectedTag = useHouseworkTagStore((state) => state.selectedTag);
+
   // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
   const queryYear = searchParams.get("year");
   const queryMonth = searchParams.get("month");
@@ -24,11 +35,51 @@ const WhereTodoPage = () => {
     const inputValue = e.target.value;
     setName(inputValue); // 입력값 상태 업데이트
   };
-
+  const houseworkDate = `${queryYear}-${queryMonth}-${queryDay}`;
+  console.log("날짜:", houseworkDate);
+  // Zustand 상태 가져오기 (최적화)
   // 다음 버튼 클릭 핸들러
   const handleNextClick = () => {
     setHouseworkDetail(name); // Zustand 스토어에 입력값 저장 (비어 있어도 문제 없음)
-    navigate(`/whotodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`); // 다음 페이지로 이동
+    // 다음 페이지로 이동
+    handleConfirmClick();
+  };
+
+  const handleConfirmClick = async () => {
+    const payload = {
+      houseworkPlace: houseworkPlace || "미정",
+      houseworkDetail: houseworkDetail || "미정",
+      houseworkDate: houseworkDate,
+      tag: selectedTag,
+    };
+
+    console.log("POST 데이터:", payload);
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await instance.post(
+        `${process.env.REACT_APP_SERVER_PORT}housework/posting/`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        console.log("POST 성공", response.data);
+        const newHouseworkId = response.data.data.houseworkId;
+        setHouseworkId(newHouseworkId); // 상태에 저장
+        navigate(
+          `/whotodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`
+        );
+      } else {
+        console.error("에러 발생:");
+      }
+    } catch (error) {
+      console.error("에러 발생:", error);
+    }
   };
 
   return (
@@ -37,6 +88,7 @@ const WhereTodoPage = () => {
       <BackHeader
         title={<br />}
         pageurl={`/maketodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`}
+        houseworkId={houseworkId}
       />
       <Container>
         <Top>
@@ -61,7 +113,7 @@ const WhereTodoPage = () => {
   );
 };
 
-export default WhereTodoPage;
+export default WhatTodoPage;
 
 const Container = styled.div`
   display: flex;

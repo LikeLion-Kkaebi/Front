@@ -19,7 +19,16 @@ export const KakaoLogin = async (code) => {
     localStorage.setItem("nickname", response.data.user.nickname);
     localStorage.setItem("token", response.data.token);
 
-    window.location.replace("/signupintro");
+    //is_new_user 값에 따라서 기존 유처 처리하는 부분.
+    // 백에서 boolean값을 넘겨줄 때 파이썬이라 첫 문자가 대문자인데, js에서는 boolean값을 소만자만 처리함.
+    // 그래서 백으로부터 받은 값을 소문자로 처리해주는 코드 필요
+    if (String(response.data.user.is_new_user).toLowerCase() === "true") {
+      // 처음 가입하는 유저라면 온보딩으로 이동
+      window.location.replace("/signupintro");
+    } else {
+      // 기존에 가입한 기록이 있으면 홈으로 이동
+      window.location.replace("/homemain");
+    }
 
     return Promise.resolve(response.data);
   } catch (error) {
