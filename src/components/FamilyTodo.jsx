@@ -130,8 +130,8 @@ const FinishBtn = styled.div`
   align-items: center;
   gap: 10px;
   border-radius: 4px;
-  background: ${({ isDone }) =>
-    isDone ? "var(--key_purple, #aa91e8)" : "#bebebe"};
+  background: ${({ houseworkDone }) =>
+    houseworkDone ? "var(--key_purple, #aa91e8)" : "#bebebe"};
   color: var(--white, #f2f2f2);
   text-align: center;
   font-size: 12px;
