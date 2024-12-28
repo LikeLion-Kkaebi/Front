@@ -40,7 +40,7 @@ const UpgradePage = () => {
       alert(response.data.message);
     } catch (error) {
       console.error(error);
-      alert(error);
+      alert(error.response.data.message);
     }
   };
 

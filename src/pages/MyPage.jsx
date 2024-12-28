@@ -220,7 +220,7 @@ const MyPage = () => {
 
             <ProgressBar>
               {[1, 2, 3, 4, 5, 6, 7].map((level) => (
-                <ProgressItem key={level} active={level <= activeLevel}>
+                <ProgressItem key={level} isActive={level === activeLevel}>
                   {level === activeLevel && (
                     <ProfileImage
                       src={profileImages[imageNumber]}
@@ -367,7 +367,8 @@ const ProgressItem = styled.div`
   height: 45px;
   width: 100%;
   box-shadow: 0px 2px 1px 0px rgba(0, 0, 0, 0.25);
-  background-color: ${(props) => (props.active ? "#AA91E8" : "#f5f5f6")};
+  background-color: ${(props) =>
+    props.isActive ? "#AA91E8" : "#f5f5f6"}; /* activeLevel만 보라색 */
   position: relative;
 `;
 
