@@ -18,11 +18,13 @@ const useHouseworkTagStore = create((set) => ({
   houseworkTag,
   houseworkPlace: "",
   houseworkDetail: "",
+  houseworkId: null, // houseworkId 추가
   selectedTag: null,
   signupSelectedTag: null, // SignupBestWorkPage에서 사용
   setHouseworkPlace: (place) => set({ houseworkPlace: place }),
   setHouseworkDetail: (detail) => set({ houseworkDetail: detail }),
   setSelectedTag: (tag) => set({ selectedTag: tag }),
+  setHouseworkId: (houseworkId) => set({ houseworkId }), // 수정된 부분
   setSignupSelectedTag: (tag) => set({ signupSelectedTag: tag }),
 }));
 

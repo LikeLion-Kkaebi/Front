@@ -25,10 +25,13 @@ const UpgradePage = () => {
   const goPremium = async () => {
     try {
       const token = localStorage.getItem("token");
+
       const response = await instance.patch(
         `${process.env.REACT_APP_SERVER_PORT}mypage/plan-upgrade/`,
+        {}, // 데이터 없이 헤더만 보낼 경우 빈 객체 필요
         {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }

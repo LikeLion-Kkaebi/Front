@@ -47,8 +47,9 @@ const FamilyTodo = ({
         </NameWrapper>
         <CategoryWrapper>
           <Category>{tagValue}</Category>
-          <Category>{houseworkPlace}</Category>
-          <Category>{houseworkDetail}</Category>
+          {/* houseworkPlace와 houseworkDetail 값이 "미정"이 아닌 경우만 렌더링 */}
+          {houseworkPlace !== "미정" && <Category>{houseworkPlace}</Category>}
+          {houseworkDetail !== "미정" && <Category>{houseworkDetail}</Category>}
         </CategoryWrapper>
       </Wrapper>
     </Container>

@@ -22,13 +22,13 @@ const WhoTodoPage = () => {
   const queryMonth = searchParams.get("month");
   const queryDay = searchParams.get("date");
 
-  const selectedTag = useHouseworkTagStore((state) => state.selectedTag);
+  const houseworkId = useHouseworkTagStore((state) => state.houseworkId);
 
   const [comment, setComment] = useState("");
 
   useEffect(() => {
     fetchProfiles();
-  }, [selectedTag, fetchProfiles]);
+  }, [houseworkId, fetchProfiles]);
 
   const toggleCategory = (nickname) => {
     if (selectedCategories.includes(nickname)) {
@@ -60,7 +60,7 @@ const WhoTodoPage = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await instance.get(
-          `${process.env.REACT_APP_SERVER_PORT}housework/recommend-member?houseworkId=${selectedTag}`,
+          `${process.env.REACT_APP_SERVER_PORT}housework/recommend-member?houseworkId=${houseworkId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -77,22 +77,33 @@ const WhoTodoPage = () => {
           if (recommendUser) {
             setComment(
               <>
-                {recommendUser.nickname}{" "}
-                <span style={{ color: "#AA91E8" }}>님은 어떨까요?</span>
+                <span style={{ color: "#AA91E8" }}>
+                  {recommendUser.nickname}
+                </span>
+                <span> 님은 어떨까요?</span>
               </>
             );
           } else {
-            setComment("추천 사용자를 찾을 수 없습니다.");
+            setComment("");
           }
         }
       } catch (error) {
-        setComment(""); // 에러 처리 시 comment 초기화
-        alert(error.response ? error.response.data.error : "서버 에러 발생");
+        if (error.response && error.response.status === 403) {
+          console.log(
+            "AI 추천 기능은 프리미엄 요금제를 결제해야 사용할 수 있습니다."
+          );
+          setComment("");
+        } else if (error.response) {
+          console.log("오류 발생: ", error.response);
+        } else {
+          alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+        setComment(""); // 에러 발생 시 comment 초기화
       }
     };
 
     fetchRecommendation();
-  }, [selectedTag, profiles]);
+  }, [houseworkId, profiles]);
 
   return (
     <>
@@ -100,6 +111,7 @@ const WhoTodoPage = () => {
       <BackHeader
         title={<br />}
         pageurl={`/whattodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`}
+        houseworkId={houseworkId}
       />
       <Container>
         <Top>
@@ -107,7 +119,11 @@ const WhoTodoPage = () => {
             <KkaebiProfile src={KkaebiProfileImg} alt="깨비 프로필 이미지" />
             <Comment>
               <p>담당할 식구를 선택해주세요.</p>
-              {comment && <p style={{ fontSize: "16px" }}>{comment}</p>}
+              {comment && (
+                <p style={{ fontSize: "16px", marginBottom: "-20px" }}>
+                  {comment}
+                </p>
+              )}
             </Comment>
           </Kkaebi>
           <FamilySelector
