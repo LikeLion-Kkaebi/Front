@@ -6,6 +6,7 @@ import Header from "../../components/BackHeader.jsx";
 
 import GlobalStyle from "../../style/GlobalStyle.js";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
+import NoNotification from "../../images/NoWorkRecord.svg";
 
 const HomeStatisticsPage = () => {
   const navigate = useNavigate();
@@ -43,8 +44,27 @@ const HomeStatisticsPage = () => {
     fetchStatistics();
   }, []);
 
+  console.log(data);
+
   if (!data) {
     return <div></div>;
+  }
+
+  // 분배 배열이 비어있는 경우 처리
+  if (
+    !data ||
+    data.house_completion_rate === "none" ||
+    data.total_house_tasks === 0
+  ) {
+    return (
+      <>
+        <GlobalStyle />
+        <Header title="집안일 통계" pageurl={"/homemain"} />
+        <NoDataContainer>
+          <NoImage src={NoNotification} alt="No Work Record" />
+        </NoDataContainer>
+      </>
+    );
   }
 
   const calculateSlices = () => {
@@ -357,4 +377,17 @@ const Nickname = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+`;
+
+const NoDataContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 109px);
+`;
+
+const NoImage = styled.img`
+  width: 337px;
+  height: 260px;
 `;
