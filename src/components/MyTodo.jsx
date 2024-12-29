@@ -48,6 +48,7 @@ const MyTodo = ({
 
       if (response.status === 200) {
         setIsChecked(response.data.data.houseworkDone);
+        console.log("할 일 상태 변경 성공", response.data.data);
       } else {
         console.error("API 요청 실패:", response.status);
       }

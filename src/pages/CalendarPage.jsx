@@ -305,7 +305,24 @@ const DateBox = styled.div`
     position: absolute;
     top: 20px;
   }
+
+  &::before > .today-indicator {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px; // 고정된 원의 너비
+    height: 32px; // 고정된 원의 높이
+    background-color: #aa91e8;
+    border-radius: 50%;
+    z-index: -1;
+  }
 `;
+
+const TodayIndicator = ({ isToday }) => {
+  return isToday ? <div className="today-indicator" /> : null;
+};
 
 const TaskIndicator = ({ hasTask }) => {
   return hasTask ? <div className="task-indicator" /> : null;
