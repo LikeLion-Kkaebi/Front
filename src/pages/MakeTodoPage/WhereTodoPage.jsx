@@ -22,7 +22,10 @@ const WhereTodoPage = () => {
   // 입력값 변경 핸들러
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
-    setName(inputValue); // 입력값 상태 업데이트
+    if (inputValue.length <= 4) {
+      // 4자 이하일 때만 상태 업데이트
+      setName(inputValue);
+    }
   };
 
   // 다음 버튼 클릭 핸들러

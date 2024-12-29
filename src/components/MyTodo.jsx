@@ -16,6 +16,7 @@ const MyTodo = ({
   houseworkDone,
   removeStyles,
   isEditing,
+  updateTasks,
 }) => {
   const [isChecked, setIsChecked] = useState(houseworkDone);
   const [tagValue, setTagValue] = useState("");
@@ -70,6 +71,7 @@ const MyTodo = ({
         console.log("DELETE 성공:", response.data);
         console.log(`Deleting houseworkId: ${houseworkId}`);
         setModal(false);
+        updateTasks();
       } else {
         console.error("DELETE 요청 실패:", response.status);
       }

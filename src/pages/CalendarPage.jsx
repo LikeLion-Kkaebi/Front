@@ -253,7 +253,7 @@ const DaysContainer = styled.div`
 const Day = styled.div`
   flex: 1;
   text-align: center;
-  font-weight: bold;
+  font-weight: light;
   color: #555;
 `;
 
@@ -275,9 +275,12 @@ const DateBox = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+  cursor: ${({ type }) =>
+    type === "prev" || type === "next" ? "default" : "pointer"};
   color: ${({ type }) =>
-    type === "prev" || type === "next" ? "#ccc" : "inherit"};
+    type === "prev" || type === "next"
+      ? "#B3B3B3"
+      : "#000"}; // 이전/다음 월은 회색
   position: relative;
   background: ${({ type, isToday }) =>
     type === "current" && isToday ? "var(--key_purple, #aa91e8)" : "none"};
@@ -285,7 +288,7 @@ const DateBox = styled.div`
     type === "current" && isToday ? "100%" : "none"};
   color: ${({ type, isToday }) =>
     type === "current" && isToday ? "white" : "inherit"};
-
+  opacity: ${({ type }) => (type === "prev" || type === "next" ? 0.3 : 1)};
   & > .task-indicator {
     width: 7px;
     height: 7px;

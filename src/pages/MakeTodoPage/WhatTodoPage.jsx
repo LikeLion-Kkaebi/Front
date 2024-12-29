@@ -5,7 +5,6 @@ import GlobalStyle from "../../style/GlobalStyle";
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
 import BackHeader from "../../components/BackHeader";
 import useHouseworkTagStore from "../../stores/HouseworkTagStore";
-
 import instance from "axios";
 
 const WhatTodoPage = () => {
@@ -13,46 +12,42 @@ const WhatTodoPage = () => {
   const [searchParams] = useSearchParams();
   const houseworkId = useHouseworkTagStore((state) => state.houseworkId);
   const setHouseworkId = useHouseworkTagStore((state) => state.setHouseworkId);
-  const [name, setName] = useState(""); // 입력값 상태 관리
+  const [name, setName] = useState("");
   const setHouseworkDetail = useHouseworkTagStore(
     (state) => state.setHouseworkDetail
-  ); // Zustand 상태 업데이트 함수 가져오기
-
+  );
   const houseworkPlace = useHouseworkTagStore((state) => state.houseworkPlace);
   const selectedTag = useHouseworkTagStore((state) => state.selectedTag);
-
-  // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
-  const queryYear = searchParams.get("year");
-  const queryMonth = searchParams.get("month");
-  const queryDay = searchParams.get("date");
-
-  // 입력값 변경 핸들러
-  const handleInputChange = (e) => {
-    const inputValue = e.target.value;
-    setName(inputValue); // 입력값 상태 업데이트
-  };
-  const houseworkDate = `${queryYear}-${queryMonth}-${queryDay}`;
-
-  // Zustand 상태 가져오기 (최적화)
   const houseworkDetail = useHouseworkTagStore(
     (state) => state.houseworkDetail
   );
-  // 다음 버튼 클릭 핸들러
-  const handleNextClick = () => {
-    setHouseworkDetail(name); // Zustand 스토어에 입력값 저장 (비어 있어도 문제 없음)
-    // 다음 페이지로 이동
-    handleConfirmClick();
+
+  const queryYear = searchParams.get("year");
+  const queryMonth = searchParams.get("month");
+  const queryDay = searchParams.get("date");
+  const houseworkDate = `${queryYear}-${queryMonth}-${queryDay}`;
+
+  // 입력값 변경 시 로컬 state와 Zustand store 모두 업데이트
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value;
+    if (inputValue.length <= 6) {
+      setName(inputValue);
+      setHouseworkDetail(inputValue);
+    } // 즉시 Zustand store 업데이트
+  };
+
+  // 다음 버튼 클릭 핸들러를 async로 변경
+  const handleNextClick = async () => {
+    await handleConfirmClick();
   };
 
   const handleConfirmClick = async () => {
     const payload = {
       houseworkPlace: houseworkPlace || "미정",
-      houseworkDetail: name || "미정",
+      houseworkDetail: name || "미정", // houseworkDetail 대신 현재 입력값 사용
       houseworkDate: houseworkDate,
       tag: selectedTag,
     };
-
-    console.log("POST 데이터:", payload);
 
     try {
       const token = localStorage.getItem("token");
@@ -66,17 +61,17 @@ const WhatTodoPage = () => {
           },
         }
       );
+
       if (response.status === 201) {
+        console.log("POST 데이터", payload);
         console.log("POST 성공", response.data);
         const newHouseworkId = response.data.data.houseworkId;
-        setHouseworkId(newHouseworkId); // Zustand에 houseworkId 저장
-        console.log("houseworkId:", newHouseworkId);
-        setHouseworkDetail("");
+        setHouseworkId(newHouseworkId);
+        setName("");
+        setHouseworkDetail(response.data.data.houseworkDetail);
         navigate(
           `/whotodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`
         );
-      } else {
-        console.error("에러 발생:");
       }
     } catch (error) {
       console.error("에러 발생:", error);

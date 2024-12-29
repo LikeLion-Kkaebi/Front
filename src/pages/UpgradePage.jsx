@@ -13,7 +13,7 @@ import Copy from "../images/Copy.svg";
 
 const UpgradePage = () => {
   const navigate = useNavigate();
-
+  const [isPremium, setIsPremium] = useState(false);
   // 상태 업데이트
 
   const [modal, setModal] = useState(false);
@@ -38,9 +38,14 @@ const UpgradePage = () => {
       );
       console.log(response);
       alert(response.data.message);
+      navigate("/mypage");
     } catch (error) {
       console.error(error);
-      alert(error.response.data.message);
+      if (error.response && error.response.status === 400) {
+        setIsPremium(true); // isPremium 값을 true로 설정
+        navigate("/mypage");
+      }
+      alert(error.response?.data?.message || "알 수 없는 오류가 발생했습니다.");
     }
   };
 
@@ -135,10 +140,12 @@ const NextBtn = styled.button`
   padding: 16px 20px;
   border: none;
   border-radius: 8px;
-  background: #aa91e8;
+  background: ${(props) =>
+    props.isPremium ? "var(--key_purple, #aa91e8)" : "#d3d3d3"};
   justify-content: center;
   align-items: center;
-  cursor: "pointer";
+  cursor: ${(props) => (props.isPremium ? "pointer" : "not-allowed")};
+  display: flex;
   color: #fff;
   font-family: Pretendard;
   font-size: 16px;

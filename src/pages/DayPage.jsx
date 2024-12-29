@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -16,9 +16,8 @@ const DayPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("myTasks");
-  const [adjustedMargin, setAdjustedMargin] = useState(85);
   const [isEditing, setIsEditing] = useState(false); // Add this state
-
+  const [adjustedMargin, setAdjustedMargin] = useState(85);
   // Zustand에서 상태와 상태 변경 함수 가져오기
   const { setYear, setMonth, setDay, month, day } = useDateStore();
 
@@ -30,6 +29,48 @@ const DayPage = () => {
   const queryYear = searchParams.get("year");
   const queryMonth = searchParams.get("month");
   const queryDay = searchParams.get("date");
+
+  const fetchTasks = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const [myTasksResponse, familyTasksResponse] = await Promise.all([
+        instance.get(
+          `${process.env.REACT_APP_SERVER_PORT}calendar/housework/my/${queryYear}/${queryMonth}/${queryDay}/`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+        instance.get(
+          `${process.env.REACT_APP_SERVER_PORT}calendar/housework/family/${queryYear}/${queryMonth}/${queryDay}/`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+      ]);
+      setMyTasks(myTasksResponse.data.data);
+      setFamilyTasks(familyTasksResponse.data.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  }, [queryYear, queryMonth, queryDay]);
+
+  useEffect(() => {
+    if (queryYear && queryMonth && queryDay) {
+      setYear(Number(queryYear));
+      setMonth(Number(queryMonth));
+      setDay(Number(queryDay));
+    }
+  }, [queryYear, queryMonth, queryDay, setYear, setMonth, setDay]);
+
+  useEffect(() => {
+    if (queryYear && queryMonth && queryDay) {
+      fetchTasks();
+    }
+  }, [fetchTasks, queryYear, queryMonth, queryDay]);
+
+  const updateTasks = useCallback(() => {
+    fetchTasks();
+  }, [fetchTasks]);
+
+  useEffect(() => {
+    fetchTasks(); // 컴포넌트 마운트 시 데이터 로드
+  }, [fetchTasks]);
 
   useEffect(() => {
     const totalHeight = document.body.scrollHeight; // 콘텐츠의 총 높이
@@ -166,6 +207,7 @@ const DayPage = () => {
                 houseworkId={task.houseworkId}
                 houseworkDone={task.houseworkDone}
                 isEditing={isEditing}
+                updateTasks={updateTasks}
               />
             ))
           ) : (
@@ -182,6 +224,8 @@ const DayPage = () => {
               houseworkDetail={task.houseworkDetail}
               houseworkId={task.houseworkId}
               houseworkDone={task.houseworkDone}
+              isEditing={isEditing}
+              updateTasks={updateTasks}
             />
           ))
         ) : (

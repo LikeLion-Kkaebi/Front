@@ -11,7 +11,7 @@ const TodoDelModal = ({ setModal, goDelete }) => {
     try {
       await goDelete(); // 회원가입 요청 실행
       toggleModal(); // 모달 닫기
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error("탈퇴 오류:", error);
     }

@@ -52,6 +52,7 @@ const AskTodoPage = () => {
 
   console.log("selectedUser 값:", selectedUser);
   console.log("characterImage 값:", characterImage);
+  console.log("houseworkDetail", houseworkDetail);
 
   useEffect(() => {
     // tagNumber가 변경될 때마다 store에서 value 찾기
@@ -85,7 +86,6 @@ const AskTodoPage = () => {
       console.log("PUT 데이터:", putPayload);
       const token = localStorage.getItem("token");
 
-      // 두 번째 요청
       const putResponse = await instance.put(
         `${process.env.REACT_APP_SERVER_PORT}housework/manager/`,
         putPayload,
