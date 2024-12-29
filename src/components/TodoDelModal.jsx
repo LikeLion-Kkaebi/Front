@@ -55,6 +55,8 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100vh;
   z-index: 1000; /* 헤더보다 위에 표시되도록 설정 */
+  top: 0; // 추가: 화면 최상단부터 시작하도록 설정
+  left: 0; // 추가: 화면 왼쪽부터 시작하도록 설정
 `;
 
 const ModalBackground = styled.div`
@@ -62,7 +64,9 @@ const ModalBackground = styled.div`
   width: 100%;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.55);
-  z-index: 9; /* 모달창보다 뒤에 위치 */
+  z-index: 999; /* 모달창보다 뒤에 위치 */
+  top: 0; // 추가: 화면 최상단부터 시작하도록 설정
+  left: 0;
 `;
 
 const ModalWrapper = styled.div`
@@ -72,7 +76,7 @@ const ModalWrapper = styled.div`
   border-radius: 10px;
   background: #fff;
   position: relative;
-  z-index: 10; /* ModalBackground보다 위에 표시되도록 설정 */
+  z-index: 1001; /* ModalBackground보다 위에 표시되도록 설정 */
 `;
 
 const ModalTop = styled.div`
@@ -82,7 +86,7 @@ const ModalTop = styled.div`
   height: 52px;
   position: absolute;
   top: 0;
-  z-index: 11; /* ModalWrapper 내부에서 가장 위에 표시 */
+  z-index: 1002; /* ModalWrapper 내부에서 가장 위에 표시 */
   color: #fff;
   text-align: center;
   font-family: Pretendard;
