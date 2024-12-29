@@ -25,11 +25,11 @@ const Header = ({ title }) => {
   };
 
   const closeModal = () => {
-    setIsClosing(true); // 닫힘 상태로 설정
+    setIsClosing(true);
     setTimeout(() => {
-      setIsClosing(false); // 닫힘 상태 초기화
-      setModalOpen(false); // 모달을 DOM에서 제거
-    }, 300); // 애니메이션 지속 시간 (0.3초)
+      setIsClosing(false);
+      setModalOpen(false);
+    }, 300);
   };
 
   const goToPage = (url) => {

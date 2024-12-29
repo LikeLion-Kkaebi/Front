@@ -17,7 +17,6 @@ const CalendarPage = () => {
   const navigate = useNavigate();
   const today = new Date();
 
-  // 월 변경 시 데이터 가져오기
   useEffect(() => {
     const fetchMonthData = async () => {
       const year = currentDate.getFullYear();
@@ -44,7 +43,7 @@ const CalendarPage = () => {
   useEffect(() => {
     console.log("Month data changed:", monthData);
   }, [monthData]);
-  // 오늘의 할 일 가져오기
+
   useEffect(() => {
     const fetchTodayTasks = async () => {
       const token = localStorage.getItem("token");
@@ -68,7 +67,7 @@ const CalendarPage = () => {
     };
 
     fetchTodayTasks();
-  }, []); // 오늘의 할 일은 컴포넌트가 처음 마운트될 때만 호출
+  }, []);
 
   const handlePrevMonth = () => {
     const newDate = new Date(
@@ -103,6 +102,16 @@ const CalendarPage = () => {
         ))}
       </DaysContainer>
     );
+  };
+
+  const getSortedTasks = (tasks) => {
+    return [...tasks].sort((a, b) => {
+      if (a.houseworkDone === b.houseworkDone) {
+        return 0;
+      }
+
+      return a.houseworkDone ? 1 : -1;
+    });
   };
 
   const renderDates = () => {
@@ -181,7 +190,7 @@ const CalendarPage = () => {
         {renderDates()}
         <MyTodoContainer>
           <Name>{`${today.getMonth() + 1}월 ${today.getDate()}일`}</Name>
-          {todayTasks.map((todo, index) => (
+          {getSortedTasks(todayTasks).map((todo, index) => (
             <MyTodo
               key={index}
               categoryName={todo.tag.tagid}
@@ -278,9 +287,7 @@ const DateBox = styled.div`
   cursor: ${({ type }) =>
     type === "prev" || type === "next" ? "default" : "pointer"};
   color: ${({ type }) =>
-    type === "prev" || type === "next"
-      ? "#B3B3B3"
-      : "#000"}; // 이전/다음 월은 회색
+    type === "prev" || type === "next" ? "#B3B3B3" : "#000"};
   position: relative;
   background: ${({ type, isToday }) =>
     type === "current" && isToday ? "var(--key_purple, #aa91e8)" : "none"};

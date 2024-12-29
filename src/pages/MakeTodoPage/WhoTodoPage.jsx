@@ -11,13 +11,13 @@ import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 import instance from "axios";
 
 const WhoTodoPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null); // 단일 값으로 변경
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const profiles = useFamilyStore((state) => state.profiles);
   const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
-  // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
+
   const queryYear = searchParams.get("year");
   const queryMonth = searchParams.get("month");
   const queryDay = searchParams.get("date");
@@ -31,7 +31,7 @@ const WhoTodoPage = () => {
   }, [houseworkId, fetchProfiles]);
 
   const toggleCategory = (nickname) => {
-    setSelectedCategory((prev) => (prev === nickname ? null : nickname)); // 선택한 식구만 유지
+    setSelectedCategory((prev) => (prev === nickname ? null : nickname));
   };
 
   const handleNextClick = () => {
@@ -65,7 +65,7 @@ const WhoTodoPage = () => {
         );
 
         if (response.status === 200 && response.data.response) {
-          const responseUserNumber = parseInt(response.data.response, 10); // int로 변환
+          const responseUserNumber = parseInt(response.data.response, 10);
           const recommendUser = profiles.find(
             (profile) => parseInt(profile.userid, 10) === responseUserNumber
           );
@@ -94,7 +94,7 @@ const WhoTodoPage = () => {
         } else {
           alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
         }
-        setComment(""); // 에러 발생 시 comment 초기화
+        setComment("");
       }
     };
 
@@ -123,13 +123,13 @@ const WhoTodoPage = () => {
             </Comment>
           </Kkaebi>
           <FamilySelector
-            selectedCategories={[selectedCategory]} // 선택된 항목 하나만 전달
+            selectedCategories={[selectedCategory]}
             onToggle={toggleCategory}
           />
         </Top>
         <Bottom>
           <NextBtn
-            $isActive={selectedCategory !== null} // 선택된 식구가 있으면 활성화
+            $isActive={selectedCategory !== null}
             onClick={handleNextClick}
           >
             다음
@@ -142,7 +142,6 @@ const WhoTodoPage = () => {
 
 export default WhoTodoPage;
 
-// 스타일 컴포넌트
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -168,7 +167,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
   margin-bottom: 20px;
 `;
 

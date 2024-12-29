@@ -101,9 +101,9 @@ const MyTodo = ({
           )}
         </Front>
         <Img
-          src={isEditing ? Delete : isChecked ? CheckPurple : NoCheck} // Change based on isEditing
+          src={isEditing ? Delete : isChecked ? CheckPurple : NoCheck}
           alt="Check or Delete"
-          onClick={isEditing ? openModal : toggleCheck} // Trigger delete modal in edit mode
+          onClick={isEditing ? openModal : toggleCheck}
         />
       </Container>
     </>
@@ -165,45 +165,4 @@ const TodoCategory = styled.div`
   gap: 10px;
   border-radius: 4px;
   border: 1px solid var(--key_purple, #aa91e8);
-`;
-
-const Popup = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const PopupContent = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-
-  p {
-    margin-bottom: 20px;
-  }
-
-  button {
-    margin: 5px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:first-child {
-      background-color: red;
-      color: white;
-    }
-
-    &:last-child {
-      background-color: gray;
-      color: white;
-    }
-  }
 `;

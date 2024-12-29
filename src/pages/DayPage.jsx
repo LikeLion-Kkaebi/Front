@@ -166,6 +166,16 @@ const DayPage = () => {
     setIsEditing((prev) => !prev);
   };
 
+  const getSortedTasks = (tasks) => {
+    return [...tasks].sort((a, b) => {
+      if (a.houseworkDone === b.houseworkDone) {
+        return 0; // 상태가 같으면 원래 순서 유지
+      }
+      // false가 true보다 앞에 오도록 정렬
+      return a.houseworkDone ? 1 : -1;
+    });
+  };
+
   return (
     <>
       <GlobalStyle />
@@ -198,7 +208,7 @@ const DayPage = () => {
           <LoadingMessage></LoadingMessage>
         ) : activeTab === "myTasks" ? (
           myTasks.length > 0 ? (
-            myTasks.map((task) => (
+            getSortedTasks(myTasks).map((task) => (
               <MyTodo
                 key={task.houseworkId}
                 categoryName={task.tag.tagid}
@@ -214,7 +224,7 @@ const DayPage = () => {
             renderEmptyState()
           )
         ) : familyTasks.length > 0 ? (
-          familyTasks.map((task) => (
+          getSortedTasks(familyTasks).map((task) => (
             <FamilyTodo
               key={task.houseworkId}
               nickname={task.user.nickname}

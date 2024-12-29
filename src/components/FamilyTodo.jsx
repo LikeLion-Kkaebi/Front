@@ -105,7 +105,6 @@ const FamilyTodo = ({
 
 export default FamilyTodo;
 
-// 스타일 정의
 const GlobalStyle = createGlobalStyle``;
 
 const Wrapper1 = styled.div`
@@ -190,24 +189,6 @@ const FinishBtn = styled.div`
   border-radius: 4px;
   background: ${({ houseworkDone }) =>
     houseworkDone ? "var(--key_purple, #aa91e8)" : "#bebebe"};
-  color: var(--white, #f2f2f2);
-  text-align: center;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: normal;
-`;
-
-const NoFinishBtn = styled.div`
-  display: flex;
-  width: 50px;
-  height: 24px;
-  padding: 5px 0px;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border-radius: 4px;
-  background: #bebebe;
   color: var(--white, #f2f2f2);
   text-align: center;
   font-size: 12px;

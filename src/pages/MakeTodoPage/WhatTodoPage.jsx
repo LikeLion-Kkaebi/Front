@@ -27,16 +27,14 @@ const WhatTodoPage = () => {
   const queryDay = searchParams.get("date");
   const houseworkDate = `${queryYear}-${queryMonth}-${queryDay}`;
 
-  // 입력값 변경 시 로컬 state와 Zustand store 모두 업데이트
   const handleInputChange = (e) => {
     const inputValue = e.target.value;
     if (inputValue.length <= 6) {
       setName(inputValue);
       setHouseworkDetail(inputValue);
-    } // 즉시 Zustand store 업데이트
+    }
   };
 
-  // 다음 버튼 클릭 핸들러를 async로 변경
   const handleNextClick = async () => {
     await handleConfirmClick();
   };
@@ -44,7 +42,7 @@ const WhatTodoPage = () => {
   const handleConfirmClick = async () => {
     const payload = {
       houseworkPlace: houseworkPlace || "미정",
-      houseworkDetail: name || "미정", // houseworkDetail 대신 현재 입력값 사용
+      houseworkDetail: name || "미정",
       houseworkDate: houseworkDate,
       tag: selectedTag,
     };
@@ -117,8 +115,8 @@ const Container = styled.div`
   justify-content: space-between;
   padding: 0 20px;
   background-color: #fafafa;
-  height: calc(100vh - 132px); /* Header 패딩과 NextBtn 마진 포함 */
-  overflow: hidden; /* 스크롤 숨기기 */
+  height: calc(100vh - 132px);
+  overflow: hidden;
   padding-bottom: 74px;
 `;
 
@@ -136,7 +134,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
   margin-bottom: 20px;
 `;
 
@@ -152,7 +150,7 @@ const Comment = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const Input = styled.input`
@@ -170,7 +168,7 @@ const Input = styled.input`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  box-sizing: border-box; /* 패딩 포함 너비 계산 */
+  box-sizing: border-box;
 
   &::placeholder {
     color: #787878;
@@ -182,8 +180,8 @@ const Input = styled.input`
   }
 
   &:focus {
-    border: 0.5px solid #000; /* 포커스 시 검정색 테두리 */
-    outline: none; /* 기본 포커스 효과 제거 */
+    border: 0.5px solid #000;
+    outline: none;
   }
 `;
 

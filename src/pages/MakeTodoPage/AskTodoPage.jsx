@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
 import GlobalStyle from "../../style/GlobalStyle";
-import SignupBackBtn from "../../images/SignupBackBtn.svg";
+
 import KkaebiProfileImg from "../../images/KkaebiProfile.svg";
 
 import empty1Img from "../../images/character/빈피부미인.svg";
@@ -16,8 +16,6 @@ import { useFamilyStore } from "../../stores/FamilyStore";
 import BackHeader from "../../components/BackHeader";
 import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 import instance from "axios";
-
-// URL에서 쿼리스트링으로 전달된 데이터를 가져옴
 
 const emptyImages = {
   1: empty1Img,
@@ -55,11 +53,10 @@ const AskTodoPage = () => {
   console.log("houseworkDetail", houseworkDetail);
 
   useEffect(() => {
-    // tagNumber가 변경될 때마다 store에서 value 찾기
     if (selectedTag && houseworkTag[selectedTag]) {
-      setTagValue(houseworkTag[selectedTag]); // 번호에 해당하는 value 저장
+      setTagValue(houseworkTag[selectedTag]);
     } else {
-      setTagValue("유효하지 않은 태그입니다."); // 유효하지 않은 번호 처리
+      setTagValue("유효하지 않은 태그입니다.");
     }
   }, [selectedTag, houseworkTag, houseworkId]);
 
@@ -74,11 +71,10 @@ const AskTodoPage = () => {
 
   const houseworkDate = `${queryYear}-${queryMonth}-${queryDay}`;
   console.log("날짜:", houseworkDate);
-  // Zustand 상태 가져오기 (최적화)
 
   const handleConfirmClick = async () => {
     const putPayload = {
-      housework_manager: userid, // selectedUser의 userid 추가
+      housework_manager: userid,
       houseworkId: houseworkId,
     };
 
@@ -100,7 +96,7 @@ const AskTodoPage = () => {
       if (putResponse.status === 200) {
         console.log("Manager PUT 성공", putResponse.data);
 
-        navigate("/month"); // 성공하면 월별 페이지로 이동
+        navigate("/month");
       } else {
         console.error("PUT 실패");
       }
@@ -142,7 +138,6 @@ const AskTodoPage = () => {
 
 export default AskTodoPage;
 
-// Styled Components
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -239,6 +234,6 @@ const TextInfo = styled.div`
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 21px */
+  line-height: 150%;
   letter-spacing: -0.5px;
 `;
