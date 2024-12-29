@@ -41,6 +41,16 @@ const HomeMainPage = () => {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
+
+          // house 값이 "No House"일 경우 다시 코드 입력 페이지 이동
+          if (data.house === "No House") {
+            alert(
+              "기존에 등록되어 있던 우리집에 접근이 제한되어, 다시 우리집 코드 입력 페이지로 이동합니다."
+            );
+            navigate("/signupcodeinput");
+            return; // 이후 로직 실행 방지
+          }
+
           setUserData(data);
         } else {
           console.error("Failed to fetch user data", response.status);
