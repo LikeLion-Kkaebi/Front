@@ -88,7 +88,7 @@ const HomeMainPage = () => {
   }, []);
 
   if (!userData || !familyData) {
-    return <div></div>; // 데이터 로드 전 로딩 상태
+    return <div></div>;
   }
 
   const { house, nickname, userCharacter, tasks, selected_tags } = userData;
@@ -167,7 +167,6 @@ const HomeMainPage = () => {
           {family.length > 0 ? (
             family.map((member, index) => (
               <FamilyItem key={index}>
-                {/* character 데이터를 사용하여 이미지를 출력 */}
                 <FamilyProfileImage
                   src={characterImages[member.userCharacter]}
                   alt="Family Character"

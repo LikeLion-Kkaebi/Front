@@ -26,11 +26,11 @@ const HomeHeader = ({ title }) => {
   };
 
   const closeModal = () => {
-    setIsClosing(true); // 닫힘 상태로 설정
+    setIsClosing(true);
     setTimeout(() => {
-      setIsClosing(false); // 닫힘 상태 초기화
-      setModalOpen(false); // 모달을 DOM에서 제거
-    }, 300); // 애니메이션 지속 시간 (0.3초)
+      setIsClosing(false);
+      setModalOpen(false);
+    }, 300);
   };
 
   const goToPage = (url) => {
@@ -43,7 +43,6 @@ const HomeHeader = ({ title }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      // 현재 스크롤 위치를 확인하고 상태를 업데이트
       if (window.scrollY > 50) {
         setIsScrolled(true);
       } else {
@@ -154,7 +153,6 @@ const Container = styled.div`
   padding: 20px;
   background-color: #aa91e8;
 
-  // 스크롤 상태에 따라 border-radius 동적 적용
   border-radius: ${({ isScrolled }) =>
     isScrolled ? "0px 0px 21px 21px" : "0px"};
 
