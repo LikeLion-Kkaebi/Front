@@ -41,6 +41,9 @@ const CalendarPage = () => {
     fetchMonthData();
   }, [currentDate]);
 
+  useEffect(() => {
+    console.log("Month data changed:", monthData);
+  }, [monthData]);
   // 오늘의 할 일 가져오기
   useEffect(() => {
     const fetchTodayTasks = async () => {
@@ -149,7 +152,7 @@ const CalendarPage = () => {
                 }
               >
                 {dateObj.date}
-                {dateObj.hasTask && <TaskIndicator />}
+                <TaskIndicator hasTask={dateObj.hasTask} />
               </DateBox>
             ))}
           </Week>
@@ -205,7 +208,6 @@ const Container = styled.div`
   height: calc(100vh - 132px);
   overflow-y: auto;
   padding-bottom: 74px;
-  min-width: 400px;
 `;
 
 const MyTodoContainer = styled.div`
@@ -285,7 +287,6 @@ const DateBox = styled.div`
     type === "current" && isToday ? "white" : "inherit"};
 
   & > .task-indicator {
-    /* TaskIndicator를 직접 다루기 위한 클래스 */
     width: 7px;
     height: 7px;
     background: #aa91e8;
@@ -296,7 +297,9 @@ const DateBox = styled.div`
   }
 `;
 
-const TaskIndicator = () => <div className="task-indicator" />;
+const TaskIndicator = ({ hasTask }) => {
+  return hasTask ? <div className="task-indicator" /> : null;
+};
 
 const Name = styled.div`
   color: #000;

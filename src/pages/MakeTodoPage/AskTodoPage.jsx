@@ -44,6 +44,7 @@ const AskTodoPage = () => {
   const [selectedCharacter, setSelectedCharacter] = useState(0);
   const { nickname, userid, characterImage } = selectedUser;
   const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
+  const houseworkId = useHouseworkTagStore((state) => state.houseworkId);
 
   const queryYear = searchParams.get("year");
   const queryMonth = searchParams.get("month");
@@ -59,7 +60,7 @@ const AskTodoPage = () => {
     } else {
       setTagValue("유효하지 않은 태그입니다."); // 유효하지 않은 번호 처리
     }
-  }, [selectedTag, houseworkTag]);
+  }, [selectedTag, houseworkTag, houseworkId]);
 
   if (!selectedUser) {
     return (
@@ -75,21 +76,19 @@ const AskTodoPage = () => {
   // Zustand 상태 가져오기 (최적화)
 
   const handleConfirmClick = async () => {
-    const payload = {
-      houseworkPlace: houseworkPlace || "미정",
-      houseworkDetail: houseworkDetail || "미정",
-      houseworkDate: houseworkDate,
-      tag: selectedTag,
+    const putPayload = {
+      housework_manager: userid, // selectedUser의 userid 추가
+      houseworkId: houseworkId,
     };
 
-    console.log("POST 데이터:", payload);
-    console.log("유저 아이디:", userid);
-
     try {
+      console.log("PUT 데이터:", putPayload);
       const token = localStorage.getItem("token");
-      const response = await instance.post(
-        `${process.env.REACT_APP_SERVER_PORT}housework/posting/`,
-        payload,
+
+      // 두 번째 요청
+      const putResponse = await instance.put(
+        `${process.env.REACT_APP_SERVER_PORT}housework/manager/`,
+        putPayload,
         {
           headers: {
             "Content-Type": "application/json",
@@ -98,40 +97,12 @@ const AskTodoPage = () => {
         }
       );
 
-      if (response.status === 201) {
-        console.log("POST 성공", response.data);
+      if (putResponse.status === 200) {
+        console.log("Manager PUT 성공", putResponse.data);
 
-        const houseworkId = response.data.data.houseworkId;
-
-        // 두 번째 요청의 payload에 userid 포함
-        const putPayload = {
-          housework_manager: userid, // selectedUser의 userid 추가
-          houseworkId: houseworkId,
-        };
-
-        console.log("PUT 데이터:", putPayload);
-
-        // 두 번째 요청
-        const putResponse = await instance.put(
-          `${process.env.REACT_APP_SERVER_PORT}housework/manager/`,
-          putPayload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (putResponse.status === 200) {
-          console.log("Manager PUT 성공", putResponse.data);
-
-          navigate("/month"); // 성공하면 월별 페이지로 이동
-        } else {
-          console.error("PUT 실패");
-        }
+        navigate("/month"); // 성공하면 월별 페이지로 이동
       } else {
-        console.error("POST 실패");
+        console.error("PUT 실패");
       }
     } catch (error) {
       console.error("에러 발생:", error);

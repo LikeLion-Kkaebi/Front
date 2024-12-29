@@ -136,7 +136,6 @@ const Container = styled.div`
   height: calc(100vh); /* Header 패딩과 NextBtn 마진 포함 */
   overflow: hidden; /* 스크롤 숨기기 */
   padding-bottom: 74px;
-  min-width: 390px;
 `;
 
 const Top = styled.div`

@@ -10,12 +10,14 @@ import FamilyTodo from "../components/FamilyTodo";
 import add from "../images/add.svg";
 import LoginKkaebi from "../images/LoginKkaebi.svg"; // 이미지 import
 import instance from "axios"; // Axios 인스턴스 가져오기
+import Delete from "../images/Delete.svg";
 
 const DayPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("myTasks");
   const [adjustedMargin, setAdjustedMargin] = useState(85);
+  const [isEditing, setIsEditing] = useState(false); // Add this state
 
   // Zustand에서 상태와 상태 변경 함수 가져오기
   const { setYear, setMonth, setDay, month, day } = useDateStore();
@@ -119,25 +121,38 @@ const DayPage = () => {
     </EmptyContainer>
   );
 
+  const handleEditClick = () => {
+    setIsEditing((prev) => !prev);
+  };
+
   return (
     <>
       <GlobalStyle />
       <BackHeader title={`${month}월 ${day}일`} pageurl={"/month"} />
       <Container>
-        <TabContainer>
-          <Tab
-            isActive={activeTab === "myTasks"}
-            onClick={() => setActiveTab("myTasks")}
+        <TopWrapper>
+          <TabContainer>
+            <Tab
+              isActive={activeTab === "myTasks"}
+              onClick={() => setActiveTab("myTasks")}
+            >
+              나의 할 일{activeTab === "myTasks" && <Underline />}
+            </Tab>
+            <Tab
+              isActive={activeTab === "familyTasks"}
+              onClick={() => setActiveTab("familyTasks")}
+            >
+              식구들의 할 일{activeTab === "familyTasks" && <Underline />}
+            </Tab>
+          </TabContainer>
+          <EditButton
+            onClick={handleEditClick}
+            isEditing={isEditing} // 편집 상태에 따라 스타일 변경
           >
-            나의 할 일{activeTab === "myTasks" && <Underline />}
-          </Tab>
-          <Tab
-            isActive={activeTab === "familyTasks"}
-            onClick={() => setActiveTab("familyTasks")}
-          >
-            식구들의 할 일{activeTab === "familyTasks" && <Underline />}
-          </Tab>
-        </TabContainer>
+            {isEditing ? "완료" : "편집"}
+          </EditButton>
+        </TopWrapper>
+
         {loading ? (
           <LoadingMessage></LoadingMessage>
         ) : activeTab === "myTasks" ? (
@@ -150,6 +165,7 @@ const DayPage = () => {
                 houseworkDetail={task.houseworkDetail}
                 houseworkId={task.houseworkId}
                 houseworkDone={task.houseworkDone}
+                isEditing={isEditing}
               />
             ))
           ) : (
@@ -200,7 +216,7 @@ const Container = styled.div`
 const TabContainer = styled.div`
   display: flex;
   gap: 20px;
-  margin-top: 10px;
+
   margin-bottom: 9px;
 `;
 
@@ -266,4 +282,27 @@ const EmptyImage = styled.img`
   margin-top: 32px;
   width: 251px; /* 이미지 크기 */
   height: auto;
+`;
+
+const EditButton = styled.div`
+  color: ${(props) => (props.isEditing ? "#aa91e8" : "#BEBEBE")};
+  text-align: center;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: normal;
+  display: flex;
+  padding: 5px 10px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid ${(props) => (props.isEditing ? "#aa91e8" : "#BEBEBE")};
+  cursor: pointer;
+`;
+
+const TopWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  margin-top: 10px;
+  align-items: flex-start;
 `;

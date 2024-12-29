@@ -129,6 +129,7 @@ const Container = styled.div`
   img {
     cursor: pointer;
   }
+  background-color: fafafa;
 `;
 
 const MenuName = styled.div`
