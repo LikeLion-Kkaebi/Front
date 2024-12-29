@@ -82,7 +82,6 @@ const WhatTodoPage = () => {
       <BackHeader
         title={<br />}
         pageurl={`/maketodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`}
-        houseworkId={houseworkId}
       />
       <Container>
         <Top>

@@ -34,23 +34,23 @@ const LoginPage = () => {
             깨끗한 비결,
             <Highlight>깨비</Highlight>
           </Title>
-          <Bottom>
-            <CharacterImage src={LoginKkaebi} alt="깨비 캐릭터" />
-          </Bottom>
         </TopSection>
+        <Bottom>
+          <CharacterImage src={LoginKkaebi} alt="깨비 캐릭터" />
+        </Bottom>
         <LoginButtons adjustedMargin={adjustedMargin}>
-          <NaverLoginButton onClick={() => navigate("/signupintro")}>
+          {/* <NaverLoginButton onClick={() => navigate("/signupintro")}>
             <LoginIcon name="naver" />
             <span>네이버 로그인</span>
-          </NaverLoginButton>
+          </NaverLoginButton> */}
           <KakaoLoginButton onClick={loginKakao}>
             <LoginIcon name="kakao" />
             <span>카카오 로그인</span>
           </KakaoLoginButton>
-          <GoogleLoginButton>
+          {/* <GoogleLoginButton>
             <LoginIcon name="google" />
             <span>구글 로그인</span>
-          </GoogleLoginButton>
+          </GoogleLoginButton> */}
         </LoginButtons>
       </Container>
     </>
@@ -116,6 +116,8 @@ const LoginButtons = styled.div`
   margin-top: 50px;
 `;
 
+{
+  /* 
 const NaverLoginButton = styled.button`
   display: flex;
   padding: 16px;
@@ -129,7 +131,8 @@ const NaverLoginButton = styled.button`
   color: #fff;
   font-family: Poppins;
   font-size: 16px;
-`;
+`; */
+}
 
 const KakaoLoginButton = styled.button`
   display: flex;
@@ -146,6 +149,8 @@ const KakaoLoginButton = styled.button`
   font-size: 16px;
 `;
 
+{
+  /*
 const GoogleLoginButton = styled.button`
   display: flex;
   padding: 16px;
@@ -159,4 +164,5 @@ const GoogleLoginButton = styled.button`
   color: #000;
   font-family: Poppins;
   font-size: 16px;
-`;
+`; */
+}

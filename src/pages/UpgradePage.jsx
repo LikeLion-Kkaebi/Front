@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import GlobalStyle from "../style/GlobalStyle";
 import BackHeader from "../components/BackHeader";
-import useDateStore from "../stores/DateStore"; // DateStore 가져오기
+
 import KkaebiProfileImg from "../images/KkaebiProfile.svg";
 import Modal from "../components/PremiumModal";
 import instance from "axios";
 
-import Copy from "../images/Copy.svg";
-
 const UpgradePage = () => {
   const navigate = useNavigate();
   const [isPremium, setIsPremium] = useState(false);
-  // 상태 업데이트
 
   const [modal, setModal] = useState(false);
-  // 모달창의 state를 바꾸는 함수 작성 (true <-> false)
+
   const openModal = () => {
     setModal(true);
   };
@@ -28,7 +25,7 @@ const UpgradePage = () => {
 
       const response = await instance.patch(
         `${process.env.REACT_APP_SERVER_PORT}mypage/plan-upgrade/`,
-        {}, // 데이터 없이 헤더만 보낼 경우 빈 객체 필요
+        {},
         {
           headers: {
             "Content-Type": "application/json",
@@ -42,7 +39,7 @@ const UpgradePage = () => {
     } catch (error) {
       console.error(error);
       if (error.response && error.response.status === 400) {
-        setIsPremium(true); // isPremium 값을 true로 설정
+        setIsPremium(true);
         navigate("/mypage");
       }
       alert(error.response?.data?.message || "알 수 없는 오류가 발생했습니다.");
@@ -91,8 +88,8 @@ const Container = styled.div`
   justify-content: space-between;
   padding: 0 20px;
   background-color: #fafafa;
-  height: calc(100vh - 132px); /* Header 패딩과 NextBtn 마진 포함 */
-  overflow: hidden; /* 스크롤 숨기기 */
+  height: calc(100vh - 132px);
+  overflow: hidden;
   padding-bottom: 74px;
 `;
 
@@ -110,7 +107,7 @@ const Kkaebi = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
   margin-bottom: 20px;
 `;
 
@@ -126,7 +123,7 @@ const Comment = styled.div`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 30px */
+  line-height: 150%;
 `;
 
 const Bottom = styled.div`
@@ -185,6 +182,6 @@ const Number = styled.div`
   font-size: 14px;
   font-style: normal;
   font-weight: 600;
-  line-height: 150%; /* 21px */
+  line-height: 150%;
   align-self: stretch;
 `;

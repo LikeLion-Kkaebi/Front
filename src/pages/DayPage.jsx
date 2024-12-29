@@ -4,28 +4,26 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import GlobalStyle from "../style/GlobalStyle";
 import BackHeader from "../components/BackHeader";
-import useDateStore from "../stores/DateStore"; // DateStore 가져오기
+import useDateStore from "../stores/DateStore";
 import MyTodo from "../components/MyTodo";
 import FamilyTodo from "../components/FamilyTodo";
 import add from "../images/add.svg";
-import LoginKkaebi from "../images/LoginKkaebi.svg"; // 이미지 import
-import instance from "axios"; // Axios 인스턴스 가져오기
-import Delete from "../images/Delete.svg";
+import LoginKkaebi from "../images/LoginKkaebi.svg";
+import instance from "axios";
 
 const DayPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("myTasks");
-  const [isEditing, setIsEditing] = useState(false); // Add this state
+  const [isEditing, setIsEditing] = useState(false);
   const [adjustedMargin, setAdjustedMargin] = useState(85);
-  // Zustand에서 상태와 상태 변경 함수 가져오기
+
   const { setYear, setMonth, setDay, month, day } = useDateStore();
 
-  const [myTasks, setMyTasks] = useState([]); // 나의 할 일 데이터 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태 관리
-  const [familyTasks, setFamilyTasks] = useState([]); // 식구들의 할 일 데이터 상태
+  const [myTasks, setMyTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [familyTasks, setFamilyTasks] = useState([]);
 
-  // URL에서 쿼리스트링으로 전달된 데이터를 가져옴
   const queryYear = searchParams.get("year");
   const queryMonth = searchParams.get("month");
   const queryDay = searchParams.get("date");
@@ -69,15 +67,15 @@ const DayPage = () => {
   }, [fetchTasks]);
 
   useEffect(() => {
-    fetchTasks(); // 컴포넌트 마운트 시 데이터 로드
+    fetchTasks();
   }, [fetchTasks]);
 
   useEffect(() => {
-    const totalHeight = document.body.scrollHeight; // 콘텐츠의 총 높이
-    const windowHeight = window.innerHeight; // 기기의 화면 높이
+    const totalHeight = document.body.scrollHeight;
+    const windowHeight = window.innerHeight;
     if (totalHeight > windowHeight) {
       const marginAdjustment = totalHeight - windowHeight;
-      setAdjustedMargin(85 - marginAdjustment); // 화면이 짧으면 margin을 조정
+      setAdjustedMargin(85 - marginAdjustment);
     }
   }, []);
 
@@ -86,11 +84,10 @@ const DayPage = () => {
     if (queryYear && queryMonth && queryDay) {
       setYear(Number(queryYear));
       setMonth(Number(queryMonth));
-      setDay(Number(queryDay)); // queryDay를 setDay에 제대로 전달
+      setDay(Number(queryDay));
     }
   }, [queryYear, queryMonth, queryDay, setYear, setMonth, setDay]);
 
-  // 나의 할 일 데이터 요청
   useEffect(() => {
     const fetchMyTasks = async () => {
       try {
@@ -122,7 +119,6 @@ const DayPage = () => {
     }
   }, [queryYear, queryMonth, queryDay]);
 
-  // 식구들의 할 일 데이터 요청
   useEffect(() => {
     const fetchFamilyTasks = async () => {
       try {
@@ -169,9 +165,9 @@ const DayPage = () => {
   const getSortedTasks = (tasks) => {
     return [...tasks].sort((a, b) => {
       if (a.houseworkDone === b.houseworkDone) {
-        return 0; // 상태가 같으면 원래 순서 유지
+        return 0;
       }
-      // false가 true보다 앞에 오도록 정렬
+
       return a.houseworkDone ? 1 : -1;
     });
   };
@@ -196,10 +192,7 @@ const DayPage = () => {
               식구들의 할 일{activeTab === "familyTasks" && <Underline />}
             </Tab>
           </TabContainer>
-          <EditButton
-            onClick={handleEditClick}
-            isEditing={isEditing} // 편집 상태에 따라 스타일 변경
-          >
+          <EditButton onClick={handleEditClick} isEditing={isEditing}>
             {isEditing ? "완료" : "편집"}
           </EditButton>
         </TopWrapper>
@@ -334,7 +327,7 @@ const EmptyText = styled.div`
 
 const EmptyImage = styled.img`
   margin-top: 32px;
-  width: 251px; /* 이미지 크기 */
+  width: 251px;
   height: auto;
 `;
 

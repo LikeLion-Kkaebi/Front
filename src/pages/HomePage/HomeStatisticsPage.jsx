@@ -339,8 +339,24 @@ const PieChart = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
   height: 200px;
+
+  path {
+    transform-origin: 100px 100px; /* 중심 기준 회전 */
+    animation: rotateIn 1s ease-out forwards; /* 회전 애니메이션 */
+    opacity: 0; /* 초기 상태: 투명 */
+  }
+
+  @keyframes rotateIn {
+    0% {
+      transform: rotate(0deg); /* 시작 각도 */
+      opacity: 0; /* 시작 시 투명 */
+    }
+    100% {
+      transform: rotate(360deg); /* 최종 각도 */
+      opacity: 1; /* 최종 상태: 불투명 */
+    }
+  }
 `;
 
 const Legend = styled.div`

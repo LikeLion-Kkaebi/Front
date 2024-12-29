@@ -12,7 +12,6 @@ import empty3Img from "../../images/character/빈핑크수집가.svg";
 import empty4Img from "../../images/character/빈고민해결사.svg";
 import empty5Img from "../../images/character/빈매듭의달인.svg";
 
-import { useFamilyStore } from "../../stores/FamilyStore";
 import BackHeader from "../../components/BackHeader";
 import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 import instance from "axios";
@@ -35,13 +34,10 @@ const AskTodoPage = () => {
   );
   const houseworkTag = useHouseworkTagStore((state) => state.houseworkTag);
   const selectedTag = useHouseworkTagStore((state) => state.selectedTag);
-  const setSelectedTag = useHouseworkTagStore((state) => state.setSelectedTag);
   const [tagValue, setTagValue] = useState("");
   const location = useLocation();
   const { selectedUser } = location.state || {};
-  const [selectedCharacter, setSelectedCharacter] = useState(0);
-  const { nickname, userid, characterImage } = selectedUser;
-  const fetchProfiles = useFamilyStore((state) => state.fetchProfiles);
+  const { nickname, characterImage } = selectedUser;
   const houseworkId = useHouseworkTagStore((state) => state.houseworkId);
 
   const queryYear = searchParams.get("year");
@@ -74,7 +70,7 @@ const AskTodoPage = () => {
 
   const handleConfirmClick = async () => {
     const putPayload = {
-      housework_manager: userid,
+      housework_manager: nickname,
       houseworkId: houseworkId,
     };
 
