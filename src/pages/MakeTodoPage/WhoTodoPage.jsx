@@ -11,7 +11,7 @@ import useHouseworkTagStore from "../../stores/HouseworkTagStore";
 import instance from "axios";
 
 const WhoTodoPage = () => {
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null); // 단일 값으로 변경
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -31,17 +31,13 @@ const WhoTodoPage = () => {
   }, [houseworkId, fetchProfiles]);
 
   const toggleCategory = (nickname) => {
-    if (selectedCategories.includes(nickname)) {
-      setSelectedCategories((prev) => prev.filter((item) => item !== nickname));
-    } else {
-      setSelectedCategories((prev) => [...prev, nickname]);
-    }
+    setSelectedCategory((prev) => (prev === nickname ? null : nickname)); // 선택한 식구만 유지
   };
 
   const handleNextClick = () => {
-    if (selectedCategories.length > 0) {
+    if (selectedCategory) {
       const selectedUser = profiles.find(
-        (profile) => profile.nickname === selectedCategories[0]
+        (profile) => profile.nickname === selectedCategory
       );
       navigate(
         `/Asktodo?year=${queryYear}&month=${queryMonth}&date=${queryDay}`,
@@ -127,13 +123,13 @@ const WhoTodoPage = () => {
             </Comment>
           </Kkaebi>
           <FamilySelector
-            selectedCategories={selectedCategories}
+            selectedCategories={[selectedCategory]} // 선택된 항목 하나만 전달
             onToggle={toggleCategory}
           />
         </Top>
         <Bottom>
           <NextBtn
-            $isActive={selectedCategories.length > 0}
+            $isActive={selectedCategory !== null} // 선택된 식구가 있으면 활성화
             onClick={handleNextClick}
           >
             다음
