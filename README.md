@@ -28,7 +28,7 @@
 | 집안일 통계 | ![홈_집안일 통계](https://github.com/user-attachments/assets/e37bab31-e7a6-4402-abf0-df500ba77796) | 이번주 집안일 분배 및 완료 현황을 그래프로 파악할 수 있어요. |
 | 캘린더 | ![캘린더](https://github.com/user-attachments/assets/23a57b56-cccf-4b53-bad4-3c61171b4ced) | 월별 집안일 정보와 오늘의 집안일 내용을 확인할 수 있어요. |
 | 캘린더 세부 페이지 | ![캘린더_2안](https://github.com/user-attachments/assets/72c3af96-e67f-4711-a9cd-8e0b1acb084e) | 나의 집안일 정보와 식구들의 집안일 세부 정보를 확인할 수 있어요. |
-| 식구 배치(프리미엄) | ![식구배치_프리미엄](https://github.com/user-attachments/assets/6531455d-7b67-47ae-873a-a80295994852) | 집안일을 분배할 때 담당할 식구를 추천받아 선택할 수 있어요. |
+| 식구 배치(프리미엄 - 추천 기능) | ![식구배치_프리미엄](https://github.com/user-attachments/assets/6531455d-7b67-47ae-873a-a80295994852) | 집안일을 분배할 때 담당할 식구를 추천받아 선택할 수 있어요. |
 
 
 </br></br>
