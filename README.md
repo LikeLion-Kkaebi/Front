@@ -4,7 +4,7 @@
 # **우리집이 깨끗한 비결, 깨비**
 
 
-![Thumbnail]([src/images/readme/Thumbnail.svg]
+![썸네일](https://github.com/user-attachments/assets/fec75f81-3a0f-4d00-95ca-459f6e684e24)
 
 </br></br>
 
@@ -23,6 +23,19 @@
 </br></br>
 ## 서비스 기능 소개
 
+| 화면 이름        | 화면   |
+| ---------------- | ------ |
+| 홈 | ![홈](https://github.com/user-attachments/assets/93beea9e-89f5-456f-b615-06ca86d359bd) |
+| 집안일 통계 | ![홈_집안일 통계](https://github.com/user-attachments/assets/e37bab31-e7a6-4402-abf0-df500ba77796) |
+| 캘린더 | ![캘린더](https://github.com/user-attachments/assets/23a57b56-cccf-4b53-bad4-3c61171b4ced) | 
+| 캘린더 세부 페이지 | ![캘린더_2안](https://github.com/user-attachments/assets/72c3af96-e67f-4711-a9cd-8e0b1acb084e) | 
+| 식구 배치 | ![식구배치_프리미엄](https://github.com/user-attachments/assets/6531455d-7b67-47ae-873a-a80295994852) | 
+
+![홈](https://github.com/user-attachments/assets/93beea9e-89f5-456f-b615-06ca86d359bd)
+![홈_집안일 통계](https://github.com/user-attachments/assets/e37bab31-e7a6-4402-abf0-df500ba77796)
+![캘린더](https://github.com/user-attachments/assets/23a57b56-cccf-4b53-bad4-3c61171b4ced)
+![캘린더_2안](https://github.com/user-attachments/assets/72c3af96-e67f-4711-a9cd-8e0b1acb084e)
+![식구배치_프리미엄](https://github.com/user-attachments/assets/6531455d-7b67-47ae-873a-a80295994852)
 
 </br></br>
 
