@@ -2,5 +2,6 @@
 
 # **우리집이 깨끗한 비결, 깨비**
 
-[깨비 사용하러 가기🫧] (kkaebi.site)
-![Kkaebi Thumbnail](src\images\readme\Thumbnail.svg)
+[깨비 사용하러 가기🫧](https://www.kkaebi.site/)
+
+![Thumbnail](src/images/readme/Thumbnail.svg)
