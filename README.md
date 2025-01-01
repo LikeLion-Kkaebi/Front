@@ -1,11 +1,13 @@
 ### 가구 구성원 간 가사 분배 서비스
+</br></br>
 
 # **우리집이 깨끗한 비결, 깨비**
 
-<p align="center">
+
 ![Thumbnail](src/images/readme/Thumbnail.svg)
 (https://www.kkaebi.site/)
-</p>
+
+</br></br>
 
 ## 서비스 소개
 
@@ -15,6 +17,8 @@
 
 귀여운 캐릭터와 함께 집안일 레벨을 올리며 우리집을 깨끗하게 유지해봐요!
 
+
+</br></br>
 <p align="center">
 [깨비 사용하러 가기🫧](https://www.kkaebi.site/)
 </p>
@@ -22,7 +26,7 @@
 
 ## 서비스 기능 소개
 
-
+</br></br>
 
 ## 기술 스택
 
